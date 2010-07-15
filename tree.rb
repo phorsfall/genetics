@@ -8,6 +8,10 @@ class Tree
     evaluate_node(@tree, args)
   end
 
+  def self.args(*args)
+    @args = args
+  end
+
   def self.generate
     new(random_node)
   end
@@ -22,7 +26,9 @@ class Tree
       args = Array.new(arg_count) { random_node(max_depth - 1) }
       [:call, function_name] + args
     elsif rand < ppr
-      [:arg, 0]
+      # This require @args be defined.
+      # TODO: Consider supporting named args.
+      [:arg, @args[rand(@args.length)]]
     else
       [:lit, 1]
     end

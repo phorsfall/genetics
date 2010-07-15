@@ -55,4 +55,14 @@ class TreeTest < Test::Unit::TestCase
     tree = Tree.generate
     assert_equal 2, tree.evaluate
   end
+
+  class XYTree < Tree
+    args :x, :y
+  end
+
+  def test_generating_a_random_tree_with_args
+    XYTree.stubs(:rand).returns(0, 0, 1, 0, 0, 1, 0, 1)
+    tree = XYTree.generate
+    assert_equal 30, tree.evaluate(:x => 10, :y => 20)
+  end
 end
