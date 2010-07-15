@@ -4,6 +4,7 @@ class Tree
   end
 
   def evaluate(*args)
+    args = args.first if args.first.is_a?(Hash)
     evaluate_node(@tree, args)
   end
 

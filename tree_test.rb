@@ -38,4 +38,9 @@ class TreeTest < Test::Unit::TestCase
     tree = Tree.new([:call, :*, [:call, :+, [:lit, 2], [:lit, 3]], [:call, :+, [:lit, 4], [:lit, 5]]])
     assert_equal 45, tree.evaluate
   end
+
+  def test_named_args
+    tree = Tree.new([:arg, :x])
+    assert_equal 100, tree.evaluate(:x => 100)
+  end
 end
