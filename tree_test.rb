@@ -57,6 +57,16 @@ class TreeTest < Test::Unit::TestCase
     assert_equal 30, tree.evaluate(:x => 10, :y => 20)
   end
 
+  class LiteralsTree < Tree
+    literals 40..45
+  end
+
+  def test_generating_a_random_with_custom_literals
+    LiteralsTree.stubs(:rand).returns(1, 1, 2)
+    tree = LiteralsTree.generate
+    assert_equal 42, tree.evaluate
+  end
+
   class SingleArgTree < Tree
     arg :x
   end

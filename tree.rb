@@ -1,5 +1,6 @@
 class Tree
   @args = [:x, :y]
+  @literals = (0..9).to_a
 
   def initialize(tree)
     @tree = tree
@@ -15,6 +16,10 @@ class Tree
 
   class << self
     alias_method :arg, :args
+  end
+
+  def self.literals(range)
+    @literals = range.to_a
   end
 
   def self.generate
@@ -36,7 +41,7 @@ class Tree
     else
       # TODO: Make this more useful.
       # Could define on subclass. e.g. literals 1..10
-      [:lit, rand(10)]
+      [:lit, @literals[rand(@literals.length)]]
     end
   end
 
