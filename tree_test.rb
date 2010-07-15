@@ -1,6 +1,7 @@
 require 'rubygems'
 require 'test/unit'
 require 'redgreen'
+require 'mocha'
 require 'tree'
 
 class TreeTest < Test::Unit::TestCase
@@ -47,5 +48,11 @@ class TreeTest < Test::Unit::TestCase
   def test_named_args
     tree = Tree.new([:arg, :x])
     assert_equal 100, tree.evaluate(:x => 100)
+  end
+
+  def test_generating_a_random_tree
+    Tree.stubs(:rand).returns(0, 0, 1, 1, 1, 1)
+    tree = Tree.generate
+    assert_equal 2, tree.evaluate
   end
 end
