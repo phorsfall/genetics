@@ -3,8 +3,7 @@ class Tree
     @tree = tree
   end
 
-  def evaluate(*args)
-    args = args.first if args.first.is_a?(Hash)
+  def evaluate(args = {})
     evaluate_node(@tree, args)
   end
 
@@ -26,8 +25,7 @@ class Tree
       args = Array.new(arg_count) { random_node(max_depth - 1) }
       [:call, function_name] + args
     elsif rand < ppr
-      # This require @args be defined.
-      # TODO: Consider supporting named args.
+      # TODO: This will error is args weren't defined in the class definition.
       [:arg, @args[rand(@args.length)]]
     else
       # TODO: Make this more useful.
