@@ -11,6 +11,10 @@ class Tree
     @args = args
   end
 
+  class << self
+    alias_method :arg, :args
+  end
+
   def self.generate
     new(random_node)
   end

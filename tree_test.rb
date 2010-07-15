@@ -29,7 +29,7 @@ class TreeTest < Test::Unit::TestCase
   end
 
   class SingleArgTree < Tree
-    args :x
+    arg :x
   end
 
   def test_single_arg
