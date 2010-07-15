@@ -51,9 +51,9 @@ class TreeTest < Test::Unit::TestCase
   end
 
   def test_generating_a_random_tree
-    Tree.stubs(:rand).returns(0, 0, 1, 1, 1, 1)
+    Tree.stubs(:rand).returns(0, 0, 1, 1, 7, 1, 1, 8)
     tree = Tree.generate
-    assert_equal 2, tree.evaluate
+    assert_equal 15, tree.evaluate
   end
 
   class XYTree < Tree

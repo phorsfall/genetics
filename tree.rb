@@ -31,9 +31,8 @@ class Tree
       [:arg, @args[rand(@args.length)]]
     else
       # TODO: Make this more useful.
-      # Start with rand(10) perhaps.
       # Could define on subclass. e.g. literals 1..10
-      [:lit, 1]
+      [:lit, rand(10)]
     end
   end
 
