@@ -1,4 +1,6 @@
 class Tree
+  @args = [:x, :y]
+
   def initialize(tree)
     @tree = tree
   end
