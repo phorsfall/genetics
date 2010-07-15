@@ -13,7 +13,8 @@ class Tree
   def function(name)
     {
       :+ => proc { |a,b| a + b },
-      :* => proc { |a,b| a * b }
+      :* => proc { |a,b| a * b },
+      :- => proc { |a,b| a - b }
     }[name]
   end
 

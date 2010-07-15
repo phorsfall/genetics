@@ -24,6 +24,11 @@ class TreeTest < Test::Unit::TestCase
     assert_equal 300, tree.evaluate
   end
 
+  def test_subtraction
+    tree = Tree.new([:call, :-, [:lit, 10], [:lit, 2]])
+    assert_equal 8, tree.evaluate
+  end
+
   def test_multiplication
     tree = Tree.new([:call, :*, [:lit, 10], [:lit, 10]])
     assert_equal 100, tree.evaluate
