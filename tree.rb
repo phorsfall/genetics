@@ -48,8 +48,6 @@ class Tree
     elsif rand < ppr
       [:arg, class_args[rand(class_args.length)]]
     else
-      # TODO: Make this more useful.
-      # Could define on subclass. e.g. literals 1..10
       [:lit, class_literals[rand(class_literals.length)]]
     end
   end
