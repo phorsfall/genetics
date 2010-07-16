@@ -126,4 +126,11 @@ class TreeTest < Test::Unit::TestCase
     tree = CustomFunctionsTree.new([:call, :+, [:lit, 10], [:lit, 7]])
     assert_equal 3, tree.evaluate
   end
+
+  def test_generating_a_function_call_to_a_proc_with_an_arity_of_minus_one
+    CustomFunctionsTree.stubs(:rand).returns(0, 99)
+    Array.any_instance.stubs(:rand).returns(2)
+    tree = CustomFunctionsTree.generate
+    assert_equal 99, tree.evaluate
+  end
 end

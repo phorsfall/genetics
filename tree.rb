@@ -50,6 +50,7 @@ class Tree
     if rand < fpr && max_depth > 0
       function_name = function_names.sample
       arg_count = functions[function_name].arity
+      arg_count = 0 if arg_count == -1
       args = Array.new(arg_count) { random_node(max_depth - 1) }
       [:call, function_name] + args
     elsif rand < ppr
