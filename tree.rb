@@ -39,11 +39,11 @@ class Tree
     @custom_functions[name] = block
   end
 
-  def self.generate
-    new(random_node)
+  def self.generate(max_depth = 4)
+    new random_node(max_depth)
   end
 
-  def self.random_node(max_depth = 4)
+  def self.random_node(max_depth)
     fpr = 0.5 # Probability of function
     apr = 0.5 # Probability of arg
 
