@@ -79,7 +79,7 @@ class Tree
   end
 
   def evaluate_node(node, args)
-    # [:call, :+, 1, 2]
+    # [:call, :+, [:lit, 1], [:lit, 2]]
     # [:lit, 1]
     # [:arg, 0]
     case node.first
