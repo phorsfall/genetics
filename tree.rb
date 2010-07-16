@@ -1,3 +1,10 @@
+class Array
+  # Ruby 1.9-esque method for selected a random item.
+  def sample
+    self[rand(self.length)]
+  end
+end
+
 class Tree
   @@default_args = [:x, :y]
   @@default_literals = (0..9).to_a
@@ -41,14 +48,14 @@ class Tree
     ppr = 0.5 # Probability of param
 
     if rand < fpr && max_depth > 0
-      function_name = function_names[rand(function_names.length)]
+      function_name = function_names.sample
       arg_count = functions[function_name].arity
       args = Array.new(arg_count) { random_node(max_depth - 1) }
       [:call, function_name] + args
     elsif rand < ppr
-      [:arg, class_args[rand(class_args.length)]]
+      [:arg, class_args.sample]
     else
-      [:lit, class_literals[rand(class_literals.length)]]
+      [:lit, class_literals.sample]
     end
   end
 

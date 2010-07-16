@@ -50,13 +50,15 @@ class TreeTest < Test::Unit::TestCase
   end
 
   def test_generating_a_random_tree
-    BasicTree.stubs(:rand).returns(0, 0, 1, 1, 7, 1, 1, 8)
+    BasicTree.stubs(:rand).returns(0, 1, 1, 1, 1)
+    Array.any_instance.stubs(:rand).returns(0, 7, 8)
     tree = BasicTree.generate
     assert_equal 15, tree.evaluate
   end
 
   def test_generating_a_random_tree_with_args
-    BasicTree.stubs(:rand).returns(0, 0, 1, 0, 0, 1, 0, 1)
+    BasicTree.stubs(:rand).returns(0, 1, 0, 1, 0)
+    Array.any_instance.stubs(:rand).returns(0, 0, 1)
     tree = BasicTree.generate
     assert_equal 30, tree.evaluate(:x => 10, :y => 20)
   end
@@ -66,7 +68,8 @@ class TreeTest < Test::Unit::TestCase
   end
 
   def test_generating_a_random_with_custom_literals
-    LiteralsTree.stubs(:rand).returns(1, 1, 2)
+    LiteralsTree.stubs(:rand).returns(1)
+    Array.any_instance.stubs(:rand).returns(2)
     tree = LiteralsTree.generate
     assert_equal 42, tree.evaluate
   end
