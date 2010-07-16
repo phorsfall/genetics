@@ -1,6 +1,12 @@
 class Tree
   @args = [:x, :y]
   @literals = (0..9).to_a
+  @builtin_functions = {
+    :+ => proc { |a,b| a + b },
+    :* => proc { |a,b| a * b },
+    :- => proc { |a,b| a - b }
+  }
+  @custom_functions = {}
 
   def initialize(tree)
     @tree = tree
@@ -22,6 +28,13 @@ class Tree
     @literals = range.to_a
   end
 
+  def self.function(name, &block)
+    @custom_functions ||= {}
+    @custom_functions[name] = block
+    puts @custom_functions.inspect
+    puts @builtin_functions.inspect
+  end
+
   def self.generate
     new(random_node)
   end
@@ -32,7 +45,7 @@ class Tree
 
     if rand < fpr && max_depth > 0
       function_name = function_names[rand(function_names.length)]
-      arg_count = function(function_name).arity
+      arg_count = functions[function_name].arity
       args = Array.new(arg_count) { random_node(max_depth - 1) }
       [:call, function_name] + args
     elsif rand < ppr
@@ -47,18 +60,12 @@ class Tree
 
   private
 
-  FUNCTIONS = {
-    :+ => proc { |a,b| a + b },
-    :* => proc { |a,b| a * b },
-    :- => proc { |a,b| a - b }
-  }
-
-  def self.function(name)
-    FUNCTIONS[name]
+  def self.functions
+    @builtin_functions.merge(@custom_functions)
   end
 
   def self.function_names
-    FUNCTIONS.keys
+    functions.keys
   end
 
   def evaluate_node(node, args)
@@ -68,7 +75,7 @@ class Tree
     case node.first
     when :call
       call_args = node[2..-1].map { |n| evaluate_node(n, args) }
-      self.class.function(node[1]).call(*call_args)
+      self.class.functions[node[1]].call(*call_args)
     when :lit
       node[1]
     when :arg

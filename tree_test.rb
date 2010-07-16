@@ -75,4 +75,34 @@ class TreeTest < Test::Unit::TestCase
     tree = SingleArgTree.new([:arg, :x])
     assert_equal 100, tree.evaluate(:x => 100)
   end
+
+  class CustomFunctionsTree < Tree
+    function :rand do
+      rand(100)
+    end
+  
+    function :- do |x|
+      -x
+    end
+  
+    function :** do |x, y|
+      x**y
+    end
+  end
+  
+  def test_rand_function
+    CustomFunctionsTree.stubs(:rand).returns(42)
+    tree = CustomFunctionsTree.new([:call, :rand])
+    assert_equal 42, tree.evaluate
+  end
+  
+  def test_negative_function
+    tree = CustomFunctionsTree.new([:call, :-, 10])
+    assert_equal -10, tree.evaluate
+  end
+  
+  def test_power_function
+    tree = CustomFunctionsTree.new([:call, :**, [:lit, 2], [:lit, 3]])
+    assert_equal 16, tree.evaluate
+  end
 end
