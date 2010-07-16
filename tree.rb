@@ -1,6 +1,6 @@
 class Tree
-  @args = [:x, :y]
-  @literals = (0..9).to_a
+  @@default_args = [:x, :y]
+  @@default_literals = (0..9).to_a
   @@builtin_functions = {
     :+ => proc { |a,b| a + b },
     :* => proc { |a,b| a * b },
@@ -46,16 +46,23 @@ class Tree
       args = Array.new(arg_count) { random_node(max_depth - 1) }
       [:call, function_name] + args
     elsif rand < ppr
-      # TODO: This will error if args weren't defined in the class definition.
-      [:arg, @args[rand(@args.length)]]
+      [:arg, class_args[rand(class_args.length)]]
     else
       # TODO: Make this more useful.
       # Could define on subclass. e.g. literals 1..10
-      [:lit, @literals[rand(@literals.length)]]
+      [:lit, class_literals[rand(class_literals.length)]]
     end
   end
 
   private
+
+  def self.class_args
+    @args || @@default_args
+  end
+
+  def self.class_literals
+    @literals || @@default_literals
+  end
 
   def self.functions
     @custom_functions ? @@builtin_functions.merge(@custom_functions) : @@builtin_functions

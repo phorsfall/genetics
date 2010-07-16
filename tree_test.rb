@@ -45,15 +45,19 @@ class TreeTest < Test::Unit::TestCase
     assert_equal 27, tree.evaluate(:x => 3, :y => 9)
   end
 
+  class BasicTree < Tree
+    # Inherits default args, literals and functions. i.e.
+  end
+
   def test_generating_a_random_tree
-    Tree.stubs(:rand).returns(0, 0, 1, 1, 7, 1, 1, 8)
-    tree = Tree.generate
+    BasicTree.stubs(:rand).returns(0, 0, 1, 1, 7, 1, 1, 8)
+    tree = BasicTree.generate
     assert_equal 15, tree.evaluate
   end
 
   def test_generating_a_random_tree_with_args
-    Tree.stubs(:rand).returns(0, 0, 1, 0, 0, 1, 0, 1)
-    tree = Tree.generate
+    BasicTree.stubs(:rand).returns(0, 0, 1, 0, 0, 1, 0, 1)
+    tree = BasicTree.generate
     assert_equal 30, tree.evaluate(:x => 10, :y => 20)
   end
 
