@@ -45,7 +45,7 @@ class Tree
 
   def self.random_node(max_depth = 4)
     fpr = 0.5 # Probability of function
-    ppr = 0.5 # Probability of param
+    apr = 0.5 # Probability of arg
 
     if rand < fpr && max_depth > 0
       function_name = function_names.sample
@@ -53,7 +53,7 @@ class Tree
       arg_count = 0 if arg_count == -1
       args = Array.new(arg_count) { random_node(max_depth - 1) }
       [:call, function_name] + args
-    elsif rand < ppr
+    elsif rand < apr
       [:arg, class_args.sample]
     else
       [:lit, class_literals.sample]
