@@ -8,7 +8,7 @@ end
 class Tree
   @@default_args = [:x, :y]
   @@default_literals = (0..9).to_a
-  @@builtin_functions = {
+  @@default_functions = {
     :+ => proc { |a,b| a + b },
     :* => proc { |a,b| a * b },
     :- => proc { |a,b| a - b }
@@ -71,7 +71,7 @@ class Tree
   end
 
   def self.functions
-    @custom_functions ? @@builtin_functions.merge(@custom_functions) : @@builtin_functions
+    @custom_functions ? @@default_functions.merge(@custom_functions) : @@default_functions
   end
 
   def self.function_names
