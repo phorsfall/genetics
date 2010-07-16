@@ -1,12 +1,11 @@
 class Tree
   @args = [:x, :y]
   @literals = (0..9).to_a
-  @builtin_functions = {
+  @@builtin_functions = {
     :+ => proc { |a,b| a + b },
     :* => proc { |a,b| a * b },
     :- => proc { |a,b| a - b }
   }
-  @custom_functions = {}
 
   def initialize(tree)
     @tree = tree
@@ -31,8 +30,6 @@ class Tree
   def self.function(name, &block)
     @custom_functions ||= {}
     @custom_functions[name] = block
-    puts @custom_functions.inspect
-    puts @builtin_functions.inspect
   end
 
   def self.generate
@@ -61,7 +58,7 @@ class Tree
   private
 
   def self.functions
-    @builtin_functions.merge(@custom_functions)
+    @custom_functions ? @@builtin_functions.merge(@custom_functions) : @@builtin_functions
   end
 
   def self.function_names

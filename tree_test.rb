@@ -97,12 +97,12 @@ class TreeTest < Test::Unit::TestCase
   end
   
   def test_negative_function
-    tree = CustomFunctionsTree.new([:call, :-, 10])
+    tree = CustomFunctionsTree.new([:call, :-, [:lit, 10]])
     assert_equal -10, tree.evaluate
   end
   
   def test_power_function
     tree = CustomFunctionsTree.new([:call, :**, [:lit, 2], [:lit, 3]])
-    assert_equal 16, tree.evaluate
+    assert_equal 8, tree.evaluate
   end
 end
