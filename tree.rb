@@ -46,7 +46,7 @@ class Tree
       args = Array.new(arg_count) { random_node(max_depth - 1) }
       [:call, function_name] + args
     elsif rand < ppr
-      # TODO: This will error is args weren't defined in the class definition.
+      # TODO: This will error if args weren't defined in the class definition.
       [:arg, @args[rand(@args.length)]]
     else
       # TODO: Make this more useful.
