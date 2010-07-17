@@ -133,4 +133,11 @@ class TreeTest < Test::Unit::TestCase
     tree = CustomFunctionsTree.generate
     assert_equal 99, tree.evaluate
   end
+
+  def test_mutation
+    Tree.stubs(:rand).returns(1, 1, 0, 1, 1)
+    Array.any_instance.stubs(:rand).returns(3)
+    tree = Tree.new([:call, :*, [:lit, 2], [:call, :+, [:lit, 1], [:lit, 1]]])
+    assert_equal [:call, :*, [:lit, 2], [:lit, 3]], tree.mutate
+  end
 end

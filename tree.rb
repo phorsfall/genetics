@@ -39,11 +39,11 @@ class Tree
     @custom_functions[name] = block
   end
 
-  def self.generate(max_depth = 4)
-    new random_node(max_depth)
+  def self.generate
+    new random_node
   end
 
-  def self.random_node(max_depth)
+  def self.random_node(max_depth = 4)
     fpr = 0.5 # Probability of function
     apr = 0.5 # Probability of arg
 
@@ -64,21 +64,16 @@ class Tree
     @tree = self.class.mutate_gene(@tree)
   end
 
+  private
+
   def self.mutate_gene(gene)
     if rand < 0.3
-      # TODO: What to do with this max_depth?
-      random_node(4)
+      random_node
     else
-      # node.map! do |n|
-      #   n.is_a?(Array) ? mutate_node(n) : n
-      # end
-
       return gene unless gene[0] == :call
       gene[0..1] + gene[2..-1].map { |g| mutate_gene g }
     end
   end
-
-  private
 
   def self.class_args
     @args || @@default_args
