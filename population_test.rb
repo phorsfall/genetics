@@ -22,7 +22,6 @@ class PopulationTest < Test::Unit::TestCase
   def test_evolving_a_population
     population = Population.new(SquareTree)
     tree = population.evolve
-    puts tree.inspect
     assert_equal 1, tree.evaluate(:x => 1)
     assert_equal 4, tree.evaluate(:x => 2)
     assert_equal 9, tree.evaluate(:x => 3)
