@@ -28,6 +28,8 @@ class Population
     population_with_fitness[0][1]
   end
 
+  private
+
   def weighted_rand(pexp = 0.8)
     (Math.log10(rand) / Math.log10(pexp)).to_i
   end
