@@ -129,7 +129,7 @@ class TreeTest < Test::Unit::TestCase
 
   def test_generating_a_function_call_to_a_proc_with_an_arity_of_minus_one
     CustomFunctionsTree.stubs(:rand).returns(0, 99)
-    Array.any_instance.stubs(:rand).returns(2)
+    CustomFunctionsTree.stubs(:function_names).returns(stub(:sample => :rand))
     tree = CustomFunctionsTree.generate
     assert_equal 99, tree.evaluate
   end
