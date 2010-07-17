@@ -61,8 +61,7 @@ class Tree
   end
 
   def mutate
-    @tree = self.class.mutate_gene(@tree)
-    self
+    self.class.new self.class.mutate_gene(@tree)
   end
 
   def genes
