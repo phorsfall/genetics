@@ -19,7 +19,7 @@ class Population
         if rand > 0.05
           next_generation << population_with_fitness[weighted_rand][1].mutate
         else
-          next_generation << klass.generate
+          next_generation << @klass.generate
         end
       end
       population = next_generation

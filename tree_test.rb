@@ -138,6 +138,6 @@ class TreeTest < Test::Unit::TestCase
     Tree.stubs(:rand).returns(1, 1, 0, 1, 1)
     Array.any_instance.stubs(:rand).returns(3)
     tree = Tree.new([:call, :*, [:lit, 2], [:call, :+, [:lit, 1], [:lit, 1]]])
-    assert_equal [:call, :*, [:lit, 2], [:lit, 3]], tree.mutate
+    assert_equal [:call, :*, [:lit, 2], [:lit, 3]], tree.mutate.genes
   end
 end
