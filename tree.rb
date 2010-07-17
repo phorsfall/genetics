@@ -60,6 +60,24 @@ class Tree
     end
   end
 
+  def mutate
+    @tree = self.class.mutate_gene(@tree)
+  end
+
+  def self.mutate_gene(gene)
+    if rand < 0.3
+      # TODO: What to do with this max_depth?
+      random_node(4)
+    else
+      # node.map! do |n|
+      #   n.is_a?(Array) ? mutate_node(n) : n
+      # end
+
+      return gene unless gene[0] == :call
+      gene[0..1] + gene[2..-1].map { |g| mutate_gene g }
+    end
+  end
+
   private
 
   def self.class_args
