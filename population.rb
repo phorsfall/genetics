@@ -9,8 +9,8 @@ class Population
     population_with_fitness = []
 
     500.times do
+      # TODO: Memoize Tree#fitness so we don't need to create/work with this array of tree & fitness scores.
       population_with_fitness = population.map { |t| [t.fitness, t] }
-      # TODO: Rename to ranked_population.
       population_with_fitness.sort! { |a,b| a[0] <=> b[0] }
       break if population_with_fitness[0][0] == 0
       next_generation = []
