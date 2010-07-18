@@ -58,8 +58,8 @@ def evolve(pc, popsize, maxgen=500, mutationrate=0.3, breedingrate=0.2, pexp=0.8
     scores = population.each.map { |tree| [score(tree, dataset), tree] }
     scores.sort! { |a,b| a[0] <=> b[0] }
     
-    puts scores.map { |s| s[0] }.inspect
-    scores[0][1].display
+    puts scores[0..5].map { |s| s[0] }.inspect
+    #scores[0][1].display
     break if scores[0][0] == 0
     
     
