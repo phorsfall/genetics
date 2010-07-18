@@ -64,6 +64,10 @@ class Tree
     self.class.new self.class.mutate_gene(@tree)
   end
 
+  def cross_with(other)
+    self.class.new self.class.cross_genes(@tree, other.genes)
+  end
+
   def genes
     @tree
   end
@@ -76,6 +80,18 @@ class Tree
     else
       return gene unless gene[0] == :call
       gene[0..1] + gene[2..-1].map { |g| mutate_gene g }
+    end
+  end
+
+  def self.cross_genes(gene1, gene2, top = true)
+    if rand < 0.7 && !top
+      gene2.clone
+    else
+      if gene1[0] == :call && gene2[0] == :call
+        gene1[0..1] + gene1[2..-1].map { |g| cross_genes(g, gene2[2..-1].sample, false) }
+      else
+        gene1.clone
+      end
     end
   end
 

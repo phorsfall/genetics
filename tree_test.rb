@@ -140,4 +140,15 @@ class TreeTest < Test::Unit::TestCase
     tree = Tree.new([:call, :*, [:lit, 2], [:call, :+, [:lit, 1], [:lit, 1]]])
     assert_equal [:call, :*, [:lit, 2], [:lit, 3]], tree.mutate.genes
   end
+
+  def test_crossover
+    Tree.stubs(:rand).returns(0, 1, 0)
+    Array.any_instance.stubs(:rand).returns(0, 1)
+    parent1 = Tree.new([:call, :+, [:lit, 1], [:lit, 2]])
+    parent2 = Tree.new([:call, :*, [:lit, 3], [:lit, 4]])
+    offspring = parent1.cross_with(parent2)
+    assert_equal [:call, :+, [:lit, 1], [:lit, 4]], offspring.genes
+    assert !offspring.genes.equal?(parent1.genes)
+    assert !offspring.genes.equal?(parent2.genes)
+  end
 end

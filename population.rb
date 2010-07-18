@@ -17,7 +17,7 @@ class Population
       next_generation << population_with_fitness[0][1] << population_with_fitness[1][1]
       while next_generation.size < population_size
         if rand > 0.05
-          next_generation << population_with_fitness[weighted_rand][1].mutate
+          next_generation << population_with_fitness[weighted_rand][1].mutate.cross_with(population_with_fitness[weighted_rand][1])
         else
           next_generation << @klass.generate
         end
