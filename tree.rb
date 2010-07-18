@@ -78,7 +78,7 @@ class Tree
     if rand < 0.3
       random_node
     else
-      return gene unless gene[0] == :call
+      return gene.clone unless gene[0] == :call
       gene[0..1] + gene[2..-1].map { |g| mutate_gene g }
     end
   end

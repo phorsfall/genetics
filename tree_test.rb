@@ -141,6 +141,15 @@ class TreeTest < Test::Unit::TestCase
     assert_equal [:call, :*, [:lit, 2], [:lit, 3]], tree.mutate.genes
   end
 
+  def test_mutation_clones_genes_when_no_mutation_occurs
+    Tree.stubs(:rand).returns(1)
+    #Array.any_instance.stubs(:rand).returns(0)
+    original = Tree.new([:lit, 5])
+    mutant = original.mutate
+    assert_equal [:lit, 5], mutant.genes
+    assert !mutant.genes.equal?(original.genes)
+  end
+
   def test_crossover
     Tree.stubs(:rand).returns(0, 1, 0)
     Array.any_instance.stubs(:rand).returns(0, 1)
