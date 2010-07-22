@@ -6,18 +6,15 @@ class Population
   def evolve
     population_size = 500
     population = Array.new(population_size) { @klass.generate }
-    population_with_fitness = []
 
     500.times do
-      # TODO: Memoize Tree#fitness so we don't need to create/work with this array of tree & fitness scores.
-      population_with_fitness = population.map { |t| [t.fitness, t] }
-      population_with_fitness.sort! { |a,b| a[0] <=> b[0] }
-      break if population_with_fitness[0][0] == 0
-      next_generation = []
-      next_generation << population_with_fitness[0][1] << population_with_fitness[1][1]
+      population.sort!
+      break if population.first.fitness.zero?
+      next_generation = population[0..1]
+
       while next_generation.size < population_size
         if rand > 0.05
-          next_generation << population_with_fitness[weighted_rand][1].mutate.cross_with(population_with_fitness[weighted_rand][1])
+          next_generation << population[weighted_rand].mutate.cross_with(population[weighted_rand])
         else
           next_generation << @klass.generate
         end
@@ -25,7 +22,7 @@ class Population
       population = next_generation
     end
 
-    population_with_fitness[0][1]
+    population.first
   end
 
   private

@@ -26,6 +26,10 @@ class Tree
     @args = args
   end
 
+  def memoized_fitness
+    @fitness ||= fitness
+  end
+
   class << self
     alias_method :arg, :args
   end
@@ -70,6 +74,10 @@ class Tree
 
   def genes
     @tree
+  end
+
+  def <=>(other)
+    memoized_fitness <=> other.memoized_fitness
   end
 
   private
