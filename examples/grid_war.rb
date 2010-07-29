@@ -6,6 +6,14 @@ require 'ostruct'
 class GridWarTree < Tree
   args :x1, :y1, :x2, :y2, :last_move
 
+  function :if do |c,t,f|
+    c > 0 ? t : f
+  end
+
+  function :gt do |a,b|
+    a > b ? 1 : 0
+  end
+
   def fight(competitor)
     {
       1 => :win,
@@ -99,17 +107,20 @@ class GridWar
     end
 
     def evaluate(args)
-      puts "#{@name} to move. (0 => left, 1 => right, 2 => up, 3 => down)\n"
-      gets.chomp.to_i
+      puts "#{@name}'s turn."
+      puts "Use 2, 4, 6, 8 to move.\n\n"
+      {"4" => 0, "6" => 1, "8" => 2, "2" => 3}[gets.chomp]
     end
   end
 end
 
-# population = Population.new(GridWarTree, Tournament)
-# winner = population.evolve
-# pp winner.genes
+# Evolve a new player:
+#population = Population.new(GridWarTree, Tournament)
+#winner = population.evolve
+#pp winner.genes
 
-p1 = GridWar::InteractivePlayer.new("Player1")
-# p2 = GridWar::InteractivePlayer.new("Player2")
-p2 = GridWarTree.new([:call, :-, [:lit, 4], [:call, :+, [:arg, :last_move], [:lit, 5]]])
-puts GridWar.new(p1, p2).play
+# Play against a previously evolved playe.
+require 'yaml'
+p1 = GridWar::InteractivePlayer.new("Human")
+p2 = GridWarTree.new(YAML.load_file("grid_war_genes.yml"))
+GridWar.new(p1, p2).play

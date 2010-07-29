@@ -1,0 +1,73 @@
+--- 
+- :call
+- :+
+- - :arg
+  - :last_move
+- - :call
+  - :+
+  - - :call
+    - :if
+    - - :call
+      - :*
+      - - :call
+        - :+
+        - - :lit
+          - 0
+        - - :arg
+          - :y1
+      - - :lit
+        - 6
+    - - :call
+      - :gt
+      - - :arg
+        - :y1
+      - - :call
+        - :+
+        - - :call
+          - :-
+          - - :call
+            - :+
+            - - :call
+              - :+
+              - - :arg
+                - :last_move
+              - - :arg
+                - :x1
+            - - :call
+              - :*
+              - - :arg
+                - :y1
+              - - :lit
+                - 0
+          - - :lit
+            - 8
+        - - :arg
+          - :x2
+    - - :call
+      - :gt
+      - - :lit
+        - 7
+      - - :call
+        - :*
+        - - :call
+          - :*
+          - - :lit
+            - 1
+          - - :call
+            - :+
+            - - :arg
+              - :y1
+            - - :lit
+              - 1
+        - - :arg
+          - :last_move
+  - - :call
+    - :-
+    - - :call
+      - :*
+      - - :arg
+        - :y2
+      - - :arg
+        - :y2
+    - - :lit
+      - 7
