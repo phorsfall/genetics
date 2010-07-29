@@ -4,6 +4,7 @@ class Population
     extend ranking_module
   end
 
+  # See http://www.geneticprogramming.com/Tutorial/
   def evolve
     population_size = 250
     @population = Array.new(population_size) { @klass.generate }
