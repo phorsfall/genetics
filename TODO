@@ -1,0 +1,22 @@
+1. Population should inherit from Array.
+2. Implement Selection modules.
+  i. The module should implement a #next_generation method.
+  ii. Create modules that mirror the current functionality, so we can go back and test future implementations against what we have now. (Which is from O'Reilly book.)
+  iii. Create a module that checks fitness and uses Roulette Selection. (Similar to current Fitness module.)
+  iv. Create a module that uses Co-evolution rather than fitness. This can use Tournament select for better performance.
+3. Show some stats for each population. e.g. time taken, fitness stats, some measure of diversity?
+
+Thoughts.
+
+1. Tree#fight should probably return the number of points for each player.
+2. Should we try and mutate and cross? Or just do one?
+3. Cross-over should return 2 children after doing a subtree swap.
+4. Mutate could happen in place?
+5. Is there a way to re-use the Roulette Selection module to do the selection within a Tournament?
+6. How do we handle termination conditions? Method on the Tree subclass? Block passed to Population#evolve?
+
+How to differentiate?
+
+* Graphs. e.g. Generations against fitness. Family tree?
+* Parallelism. Tournament selection may be well suited.
+
