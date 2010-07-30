@@ -109,18 +109,25 @@ class GridWar
     def evaluate(args)
       puts "#{@name}'s turn."
       puts "Use 2, 4, 6, 8 to move.\n\n"
-      {"4" => 0, "6" => 1, "8" => 2, "2" => 3}[gets.chomp]
+      {"4" => 0, "6" => 1, "8" => 2, "2" => 3}[$stdin.gets.chomp]
     end
   end
 end
 
-# Evolve a new player:
-# population = Population.new(GridWarTree, :selection_module => SegaranTournament)
-# winner = population.evolve.first
-# pp winner.genes
-
-# Play against a previously evolved playe.
-require 'yaml'
-p1 = GridWar::InteractivePlayer.new("Human")
-p2 = GridWarTree.new(YAML.load_file("grid_war_genes.yml"))
-GridWar.new(p1, p2).play
+case ARGV[0]
+when /p/
+  # Play against a previously evolved player.
+  require 'yaml'
+  p1 = GridWar::InteractivePlayer.new("Human")
+  p2 = GridWarTree.new(YAML.load_file("grid_war_genes.yml"))
+  GridWar.new(p1, p2).play
+when /e/
+  # Evolve a new player.
+  population = Population.new(GridWarTree, :selection_module => SegaranTournament)
+  winner = population.evolve.first
+  pp winner.genes
+else
+  puts "\nruby #{__FILE__} [options]\n\n"
+  puts "p = Play"
+  puts "e = Evolve\n\n"
+end
