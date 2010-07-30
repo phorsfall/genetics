@@ -1,34 +1,33 @@
-class Population
+class Population < Array
   def initialize(klass, ranking_module = Fittest)
+    @population_size = 250
     @klass = klass
     extend ranking_module
+    super(@population_size) { @klass.generate }
   end
 
   # See http://www.geneticprogramming.com/Tutorial/
   def evolve
-    population_size = 250
-    @population = Array.new(population_size) { @klass.generate }
-
     60.times do
       rank!
 
       # TODO: This only applies when using Fittest, and I'm not sure there's an equivalent for Tournament.
       # i.e. Is there such a thing as a perfect player in a tournament, or should we just keep evolving?
-      #break if population.first.fitness.zero?
+      #break if first.fitness.zero?
 
-      next_generation = @population[0..1]
+      next_generation = self[0..1]
 
-      while next_generation.size < population_size
+      while next_generation.size < @population_size
         if rand > 0.05
-          next_generation << @population[weighted_rand].mutate.cross_with(@population[weighted_rand])
+          next_generation << self[weighted_rand].mutate.cross_with(self[weighted_rand])
         else
           next_generation << @klass.generate
         end
       end
-      @population = next_generation
+      replace(next_generation)
     end
 
-    @population.first
+    first
   end
 
   private
@@ -40,18 +39,18 @@ end
 
 module Fittest
   def rank!
-    @population.sort!
+    sort!
   end
 end
 
 module Tournament
   def rank!
-    scores = Array.new(@population.size, 0)
+    scores = Array.new(size, 0)
 
     # Is there a built-in (or Facets) function for getting each combination?
     # Array#combination?
-    @population.each_with_index do |tree1, tree1_index|
-      @population.each_with_index do |tree2, tree2_index|
+    each_with_index do |tree1, tree1_index|
+      each_with_index do |tree2, tree2_index|
         next if tree1 == tree2
 
         # Only play against each other once.
@@ -73,8 +72,8 @@ module Tournament
       end
     end
 
-    population_with_scores = @population.zip(scores)
+    population_with_scores = zip(scores)
     population_with_scores.sort! { |a,b| b.last <=> a.last }
-    @population = population_with_scores.collect { |tree, score| tree }
+    replace population_with_scores.collect { |tree, score| tree }
   end
 end

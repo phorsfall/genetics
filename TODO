@@ -1,4 +1,3 @@
-1. Population should inherit from Array.
 2. Implement Selection modules.
   i. The module should implement a #next_generation method.
   ii. Create modules that mirror the current functionality, so we can go back and test future implementations against what we have now. (Which is from O'Reilly book.)
