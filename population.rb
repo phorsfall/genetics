@@ -1,8 +1,8 @@
 class Population < Array
-  def initialize(klass, selection_module = SegaranSelection)
-    @population_size = 250
+  def initialize(klass, options = {})
     @klass = klass
-    extend selection_module
+    @population_size = options[:size] || 250
+    extend options[:selection_module] || SegaranSelection
     super(@population_size) { @klass.generate }
   end
 

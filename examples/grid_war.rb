@@ -115,9 +115,9 @@ class GridWar
 end
 
 # Evolve a new player:
-#population = Population.new(GridWarTree, SegaranTournament)
-#winner = population.evolve.first
-#pp winner.genes
+# population = Population.new(GridWarTree, :selection_module => SegaranTournament)
+# winner = population.evolve.first
+# pp winner.genes
 
 # Play against a previously evolved playe.
 require 'yaml'
