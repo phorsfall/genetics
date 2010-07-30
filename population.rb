@@ -7,8 +7,8 @@ class Population < Array
   end
 
   # See http://www.geneticprogramming.com/Tutorial/
-  def evolve
-    60.times do
+  def evolve(generations = 60)
+    generations.times do
       break if done?
       next_generation do |tree1, tree2|
         if rand > 0.05
