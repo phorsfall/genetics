@@ -19,8 +19,12 @@ class PolynomialTree < Tree
     end
     d
   end
+
+  def ideal?
+    fitness.zero?
+  end
 end
 
 population = Population.new(PolynomialTree)
-tree = population.evolve
+tree = population.evolve.fittest
 pp tree.genes

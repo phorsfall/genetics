@@ -115,8 +115,8 @@ class GridWar
 end
 
 # Evolve a new player:
-#population = Population.new(GridWarTree, Tournament)
-#winner = population.evolve
+#population = Population.new(GridWarTree, SegaranTournament)
+#winner = population.evolve.first
 #pp winner.genes
 
 # Play against a previously evolved playe.

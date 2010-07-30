@@ -1,35 +1,34 @@
 class Population < Array
-  def initialize(klass, ranking_module = Fittest)
+  def initialize(klass, selection_module = SegaranSelection)
     @population_size = 250
     @klass = klass
-    extend ranking_module
+    extend selection_module
     super(@population_size) { @klass.generate }
   end
 
   # See http://www.geneticprogramming.com/Tutorial/
   def evolve
     60.times do
-      rank!
-
-      # TODO: This only applies when using Fittest, and I'm not sure there's an equivalent for Tournament.
-      # i.e. Is there such a thing as a perfect player in a tournament, or should we just keep evolving?
-      #break if first.fitness.zero?
-
-      next_generation = self[0..1]
-
-      while next_generation.size < @population_size
+      break if done?
+      next_generation do |tree1, tree2|
         if rand > 0.05
-          next_generation << self[weighted_rand].mutate.cross_with(self[weighted_rand])
+          tree1.mutate.cross_with(tree2)
         else
-          next_generation << @klass.generate
+          @klass.generate
         end
       end
-      replace(next_generation)
     end
-
-    first
+    self
   end
 
+  alias_method :fittest, :min
+
+  def done?
+    fittest && fittest.ideal?
+  end
+end
+
+module SegaranHelpers
   private
 
   def weighted_rand(pexp = 0.8)
@@ -37,14 +36,27 @@ class Population < Array
   end
 end
 
-module Fittest
-  def rank!
+module SegaranSelection
+  include SegaranHelpers
+
+  def next_generation
     sort!
+    next_generation = self[0..1]
+    while next_generation.size < @population_size
+      next_generation << yield(self[weighted_rand], self[weighted_rand])
+    end
+    replace(next_generation)
   end
 end
 
-module Tournament
-  def rank!
+module SegaranTournament
+  include SegaranHelpers
+
+  def fittest
+    nil
+  end
+
+  def next_generation
     scores = Array.new(size, 0)
 
     # Is there a built-in (or Facets) function for getting each combination?
@@ -74,6 +86,12 @@ module Tournament
 
     population_with_scores = zip(scores)
     population_with_scores.sort! { |a,b| b.last <=> a.last }
-    replace population_with_scores.collect { |tree, score| tree }
+    ranked_population = population_with_scores.collect { |tree, score| tree }
+
+    next_generation = ranked_population[0..1]
+    while next_generation.size < @population_size
+      next_generation << yield(ranked_population[weighted_rand], ranked_population[weighted_rand])
+    end
+    replace(next_generation)
   end
 end
