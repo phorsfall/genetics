@@ -44,4 +44,9 @@ class PopulationTest < Test::Unit::TestCase
     population.evolve(2)
     assert 3, population.generation
   end
+
+  def test_tournament_selection
+    population = Population.new(SquareTree, :selection_module => Tournament)
+    assert population.evolve.fittest.fitness.zero?
+  end
 end
