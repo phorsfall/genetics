@@ -1,16 +1,21 @@
-2. Implement Selection modules.
-  iii. Create a module that checks fitness and uses Roulette Selection. (Similar to current Fitness module.)
-  iv. Create a module that uses Co-evolution rather than fitness. This can use Tournament select for better performance.
-3. Show some stats for each population. e.g. time taken, fitness stats, some measure of diversity?
+* Rename Populations :selection_module option to :select_with or similar.
+* Rename SegaranTournament to something more appropriate.
+* Use standard file structure.
+* Ensure there's at least a simple test for each module.
+* Threading for VersusTournament.
+* Show some stats for each population. e.g. time taken, fitness stats, some measure of diversity?
+* Parameterize elitism in the replacement module.
+* Parameterize group size in the versus module.
+* Rename Tree#fight to Tree#vs. (Reflects naming of VersusTournament modules.)
+* Switch to higher fitness == better. Minimizing problems can use -ve fitness.
 
 Thoughts.
 
-1. Tree#fight should probably return the number of points for each player.
+1. Tree#fight should return the number of points for each player.
 2. Should we try and mutate and cross? Or just do one?
 3. Cross-over should return 2 children after doing a subtree swap.
 4. Mutate could happen in place?
 5. Is there a way to re-use the Roulette Selection module to do the selection within a Tournament?
-6. How do we handle termination conditions? Method on the Tree subclass? Block passed to Population#evolve?
 
 How to differentiate?
 
@@ -20,3 +25,16 @@ How to differentiate?
 Idea
 
 * Could implement & (to_proc). Why? If a tree was just a Ruby proc maybe we could do things like: plot(:x => 0..100, :y => 0..100, :function => &tree). Or maybe just implementing call (as an alias of evaluate) would be be good enough.
+
+Longer term.
+
+* Need to either remove default functions from Tree, or allow a way to remove if no required in sub-classes.
+* Can the block passed to Population#evolve work as an around filter? e.g.
+
+population.evolve do
+  puts Benchmark.realtime do
+    yield
+  end
+end
+
+Maybe we could check the block's arity to decide whether or not this is an around block?
