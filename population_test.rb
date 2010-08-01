@@ -32,6 +32,11 @@ class PopulationTest < Test::Unit::TestCase
     assert_equal 16, tree.evaluate(:x => 4)
   end
 
+  def test_specifying_the_population_size
+    population = Population.new(SquareTree, :size => 5)
+    assert_equal 5, population.size
+  end
+
   def test_specifying_the_number_of_generations_to_evolve
     population = Population.new(SquareTree)
     population.evolve(1)
