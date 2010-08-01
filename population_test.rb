@@ -49,4 +49,15 @@ class PopulationTest < Test::Unit::TestCase
     population = Population.new(SquareTree, :selection_module => Tournament)
     assert population.evolve.fittest.fitness.zero?
   end
+
+  class Player < Tree
+    def fight(other)
+      [:win, :loose, :draw].sample
+    end
+  end
+
+  def test_versus_tournament_selection
+    population = Population.new(Player, :selection_module => VersusTournament)
+    assert_nothing_raised { population.evolve(1) }
+  end
 end

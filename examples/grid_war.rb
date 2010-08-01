@@ -123,8 +123,12 @@ when /p/
   GridWar.new(p1, p2).play
 when /e/
   # Evolve a new player.
-  population = Population.new(GridWarTree, :selection_module => SegaranTournament)
-  winner = population.evolve.first
+  population = Population.new(GridWarTree, :selection_module => VersusTournament)
+  population.evolve do
+    print "."
+    $stdout.flush
+  end
+  winner = population.fittest
   pp winner.genes
 else
   puts "\nruby #{__FILE__} [options]\n\n"
