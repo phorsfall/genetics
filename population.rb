@@ -13,6 +13,7 @@ class Population < Array
       # Once called, it's assumed that #parents and #fittest are available.
       prepare
       break if done?
+      puts fittest.fitness
       generate # Create the next generation.
     end
     self
@@ -27,8 +28,6 @@ class Population < Array
       @klass.generate
     end
   end
-
-  alias_method :fittest, :min
 
   def done?
     fittest && fittest.respond_to?(:ideal?) && fittest.ideal?
