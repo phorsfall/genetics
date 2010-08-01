@@ -2,10 +2,13 @@ class Population < Array
   def initialize(klass, options = {})
     @klass = klass
     @population_size = options[:size] || 100
+    @generation = 0
     extend options[:selection_module] || SegaranSelection
     extend GenerationalReplacement # This will be configurable at runtime.
     super(@population_size) { @klass.generate }
   end
+
+  attr_reader :generation
 
   def evolve(generations = 60)
     generations.times do
@@ -15,6 +18,7 @@ class Population < Array
       yield self if block_given?
       break if done?
       generate # Create the next generation.
+      @generation += 1
     end
     self
   end
