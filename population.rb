@@ -110,8 +110,7 @@ end
 # An alternative is steady-state.
 module GenerationalReplacement
   def generate
-    # Assumes population is sorted by fitness, which isn't always possible. e.g. Competitive-selection.
-    next_gen = self[0..1] # Elitism.
+    next_gen = fittest(2) # Elitism.
     next_gen << breed(*parents) while next_gen.size < size
     replace(next_gen)
   end
