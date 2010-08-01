@@ -17,3 +17,6 @@ How to differentiate?
 * Graphs. e.g. Generations against fitness. Family tree?
 * Parallelism. Tournament selection may be well suited.
 
+Idea
+
+* Could implement & (to_proc). Why? If a tree was just a Ruby proc maybe we could do things like: plot(:x => 0..100, :y => 0..100, :function => &tree). Or maybe just implementing call (as an alias of evaluate) would be be good enough.
