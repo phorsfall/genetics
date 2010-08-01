@@ -102,7 +102,7 @@ module SegaranTournament
   end
 
   def fittest(n = 1)
-    n = 1 ? @ranked_population.first : @ranked_population[0..(count-1)]
+    n == 1 ? @ranked_population.first : @ranked_population[0..(count-1)]
   end
 
   def parents
