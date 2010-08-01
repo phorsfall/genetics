@@ -12,8 +12,8 @@ class Population < Array
       # Hook for modules to do any work they need at the start of each iteration.
       # Once called, it's assumed that #parents and #fittest are available.
       prepare
+      yield self if block_given?
       break if done?
-      puts fittest.fitness
       generate # Create the next generation.
     end
     self

@@ -26,5 +26,9 @@ class PolynomialTree < Tree
 end
 
 population = Population.new(PolynomialTree)
-tree = population.evolve.fittest
-pp tree.genes
+
+population.evolve(1000) do |g|
+  puts g.fittest.fitness
+end
+
+pp population.fittest.genes
