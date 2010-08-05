@@ -1,5 +1,5 @@
-require '../tree'
-require '../population'
+$:.unshift('lib')
+require 'genetics'
 require 'pp'
 require 'ostruct'
 
@@ -119,7 +119,7 @@ when /p/
   # Play against a previously evolved player.
   require 'yaml'
   p1 = GridWar::InteractivePlayer.new("Human")
-  p2 = GridWarTree.new(YAML.load_file("grid_war_genes.yml"))
+  p2 = GridWarTree.new(YAML.load_file(File.join(File.dirname(__FILE__), "grid_war_genes.yml")))
   GridWar.new(p1, p2).play
 when /e/
   # Evolve a new player.

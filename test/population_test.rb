@@ -1,8 +1,7 @@
 require 'rubygems'
 require 'test/unit'
 require 'redgreen'
-require 'tree'
-require 'population'
+require 'genetics'
 
 class PopulationTest < Test::Unit::TestCase
   class SquareTree < Tree

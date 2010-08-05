@@ -2,7 +2,7 @@ require 'rubygems'
 require 'test/unit'
 require 'redgreen'
 require 'mocha'
-require 'tree'
+require 'genetics'
 
 class TreeTest < Test::Unit::TestCase
   def test_literal

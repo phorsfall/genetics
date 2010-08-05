@@ -1,4 +1,3 @@
-* Use standard file structure.
 * Threading for VersusTournament.
 * Show some stats for each population. e.g. time taken, fitness stats, some measure of diversity?
 * Parameterize elitism in the replacement module.

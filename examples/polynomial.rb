@@ -1,6 +1,6 @@
-require '../tree'
-require '../population'
+$:.unshift('lib')
 require 'pp'
+require 'genetics'
 
 class PolynomialTree < Tree
   args :x, :y
