@@ -25,7 +25,7 @@ class PolynomialTree < Tree
   end
 end
 
-population = Population.new(PolynomialTree, :selection_module => Tournament)
+population = Population.new(PolynomialTree, :select_with => Tournament)
 
 population.evolve(1000) do |g|
   puts g.fittest.fitness

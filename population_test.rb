@@ -46,7 +46,7 @@ class PopulationTest < Test::Unit::TestCase
   end
 
   def test_tournament_selection
-    population = Population.new(SquareTree, :selection_module => Tournament)
+    population = Population.new(SquareTree, :select_with => Tournament)
     assert population.evolve.fittest.fitness.zero?
   end
 
@@ -57,7 +57,7 @@ class PopulationTest < Test::Unit::TestCase
   end
 
   def test_versus_tournament_selection
-    population = Population.new(Player, :selection_module => VersusTournament)
+    population = Population.new(Player, :select_with => VersusTournament)
     assert_nothing_raised { population.evolve(1) }
   end
 end

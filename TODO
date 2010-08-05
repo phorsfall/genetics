@@ -1,4 +1,3 @@
-* Rename Populations :selection_module option to :select_with or similar.
 * Rename SegaranTournament to something more appropriate.
 * Use standard file structure.
 * Ensure there's at least a simple test for each module.
