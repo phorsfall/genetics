@@ -3,7 +3,7 @@ class Population < Array
     @klass = klass
     @population_size = options[:size] || 100
     @generation = 0
-    extend options[:select_with] || SegaranSelection
+    extend options[:select_with] || SegaranRankSelection
     extend GenerationalReplacement # This will be configurable at runtime.
     super(@population_size) { @klass.generate }
   end
@@ -46,7 +46,7 @@ module SegaranHelpers
   end
 end
 
-module SegaranSelection
+module SegaranRankSelection
   include SegaranHelpers
 
   def prepare
@@ -65,7 +65,7 @@ module SegaranSelection
   end
 end
 
-module SegaranTournament
+module SegaranVersusTournament
   include SegaranHelpers
 
   def prepare

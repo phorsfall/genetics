@@ -1,6 +1,4 @@
-* Rename SegaranTournament to something more appropriate.
 * Use standard file structure.
-* Ensure there's at least a simple test for each module.
 * Threading for VersusTournament.
 * Show some stats for each population. e.g. time taken, fitness stats, some measure of diversity?
 * Parameterize elitism in the replacement module.
