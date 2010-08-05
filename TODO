@@ -1,28 +1,22 @@
-* Threading for VersusTournament.
 * Show some stats for each population. e.g. time taken, fitness stats, some measure of diversity?
+* Create a ranked selection modules that takes into account population size. (Unlike SegaranRankSelection.)
+* Threading for VersusTournament.
 * Parameterize elitism in the replacement module.
 * Parameterize group size in the versus module.
 * Rename Tree#fight to Tree#vs. (Reflects naming of VersusTournament modules.)
 * Switch to higher fitness == better. Minimizing problems can use -ve fitness.
+* Tree#fight should return the number of points for each player.
 
-Thoughts.
+Ideas/Thoughts
 
-1. Tree#fight should return the number of points for each player.
-2. Should we try and mutate and cross? Or just do one?
-3. Cross-over should return 2 children after doing a subtree swap.
-4. Mutate could happen in place?
-5. Is there a way to re-use the Roulette Selection module to do the selection within a Tournament?
-
-How to differentiate?
-
+* Should we try and mutate and cross? Or just do one?
+* Cross-over should return 2 children after doing a subtree swap.
+* Mutate could happen in place?
 * Graphs. e.g. Generations against fitness. Family tree?
 * Parallelism. Tournament selection may be well suited.
-
-Idea
-
 * Could implement & (to_proc). Why? If a tree was just a Ruby proc maybe we could do things like: plot(:x => 0..100, :y => 0..100, :function => &tree). Or maybe just implementing call (as an alias of evaluate) would be be good enough.
 
-Longer term.
+Longer Term
 
 * Need to either remove default functions from Tree, or allow a way to remove if no required in sub-classes.
 * Can the block passed to Population#evolve work as an around filter? e.g.
