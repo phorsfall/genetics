@@ -80,6 +80,10 @@ class Tree
     memoized_fitness <=> other.memoized_fitness
   end
 
+  def depth(node = genes)
+    node[0] == :call ? node[2..-1].map { |n| depth(n) }.max + 1 : 0
+  end
+
   private
 
   def self.mutate_gene(gene)

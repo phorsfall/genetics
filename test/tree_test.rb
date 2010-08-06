@@ -160,4 +160,10 @@ class TreeTest < Test::Unit::TestCase
     assert !offspring.genes.equal?(parent1.genes)
     assert !offspring.genes.equal?(parent2.genes)
   end
+
+  def test_depth
+    assert_equal 0, Tree.new([:lit, 1]).depth
+    assert_equal 1, Tree.new([:call, :*, [:lit, 1], [:lit, 1]]).depth
+    assert_equal 2, Tree.new([:call, :*, [:call, :+, [:lit, 1], [:lit, 1]], [:lit, 1]]).depth
+  end
 end
