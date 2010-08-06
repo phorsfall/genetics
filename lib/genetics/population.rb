@@ -51,6 +51,8 @@ class Population < Array
     first.respond_to?(:fitness) ? mean(:fitness) : nil
   end
 
+  private
+
   def mean(attr)
     inject(0) { |sum, m| sum + m.send(attr) } / size.to_f
   end
