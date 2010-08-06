@@ -41,10 +41,18 @@ class Population < Array
   def done?
     fittest && fittest.respond_to?(:ideal?) && fittest.ideal?
   end
-  
+
   # Statistics
   def mean_depth
-    inject(0) { |sum, m| sum + m.depth } / size.to_f
+    mean(:depth)
+  end
+
+  def mean_fitness
+    first.respond_to?(:fitness) ? mean(:fitness) : nil
+  end
+
+  def mean(attr)
+    inject(0) { |sum, m| sum + m.send(attr) } / size.to_f
   end
 end
 

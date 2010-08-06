@@ -76,4 +76,16 @@ class PopulationTest < Test::Unit::TestCase
     assert population.mean_depth.is_a?(Float)
     assert_equal expected_mean_depth, population.mean_depth
   end
+
+  def test_mean_fitness_when_tree_implements_fitness
+    population = Population.new(SquareTree, :size => 2)
+    expected_mean_fitness = (population[0].fitness + population[1].fitness) / 2.0
+    assert population.mean_fitness.is_a?(Float)
+    assert_equal expected_mean_fitness, population.mean_fitness
+  end
+
+  def test_mean_fitness_when_tree_does_not_implement_fitness
+    population = Population.new(Player, :size => 1)
+    assert_nil population.mean_fitness
+  end
 end
