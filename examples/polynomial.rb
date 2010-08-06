@@ -29,6 +29,7 @@ population = Population.new(PolynomialTree, :select_with => Tournament)
 
 population.evolve(1000) do |g|
   puts g.fittest.fitness
+  puts "Total population: #{g.size}. Duplicates: #{g.size - g.uniq.size}"
 end
 
 pp population.fittest.genes

@@ -166,4 +166,15 @@ class TreeTest < Test::Unit::TestCase
     assert_equal 1, Tree.new([:call, :*, [:lit, 1], [:lit, 1]]).depth
     assert_equal 2, Tree.new([:call, :*, [:call, :+, [:lit, 1], [:lit, 1]], [:lit, 1]]).depth
   end
+
+  def test_equality
+    assert_not_equal Tree.new([:lit, 1]), Tree.new([:lit, 2])
+    assert_equal Tree.new([:lit, 1]), Tree.new([:lit, 1])
+  end
+
+  def test_array_membership
+    population = [Tree.new([:lit, 1]), Tree.new([:lit, 1]), Tree.new([:lit, 2])]
+    assert_equal 3, population.size
+    assert_equal 2, population.uniq.size
+  end
 end

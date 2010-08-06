@@ -84,6 +84,19 @@ class Tree
     node[0] == :call ? node[2..-1].map { |n| depth(n) }.max + 1 : 0
   end
 
+  # Does overriding these 3 suggest Tree should inherit from array?
+  def ==(other)
+    genes == other.genes
+  end
+
+  def eql?(other)
+    self == other
+  end
+
+  def hash
+    genes.hash
+  end
+
   private
 
   def self.mutate_gene(gene)
