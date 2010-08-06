@@ -36,6 +36,11 @@ class Population < Array
   def done?
     fittest && fittest.respond_to?(:ideal?) && fittest.ideal?
   end
+  
+  # Statistics
+  def mean_depth
+    inject(0) { |sum, m| sum + m.depth } / size.to_f
+  end
 end
 
 # This is generational. i.e. replace the current gen with a new one.

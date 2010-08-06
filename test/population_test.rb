@@ -69,4 +69,11 @@ class PopulationTest < Test::Unit::TestCase
     population = Population.new(Player, :select_with => SegaranVersusTournament)
     assert_nothing_raised { population.evolve(1) }
   end
+
+  def test_mean_depth
+    population = Population.new(SquareTree, :size => 2)
+    expected_mean_depth = (population[0].depth + population[1].depth) / 2.0
+    assert population.mean_depth.is_a?(Float)
+    assert_equal expected_mean_depth, population.mean_depth
+  end
 end
