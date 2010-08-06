@@ -7,3 +7,7 @@ Rake::TestTask.new do |t|
 end
 
 task :default => :test
+
+task :console do
+  system "irb", "-Ilib", "-rgenetics"
+end
