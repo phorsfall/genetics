@@ -20,6 +20,11 @@ class Population < Array
       generate # Create the next generation.
       @generation += 1
     end
+    # If we complete the number if requested generations
+    # (rather than exiting when the termination condition is met)
+    # we return the population in a state where #fittest will
+    # not return expected values, as #prepare hasn't been called
+    # since we created the last generation.
     self
   end
 
