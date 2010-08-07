@@ -1,4 +1,3 @@
-* Create a ranked selection modules that takes into account population size. (Unlike SegaranRankSelection.)
 * Threading for VersusTournament.
 * Parameterize elitism in the replacement module.
 * Parameterize group size in the versus module.
