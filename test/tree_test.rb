@@ -1,8 +1,4 @@
-require 'rubygems'
-require 'test/unit'
-require 'redgreen'
-require 'mocha'
-require 'genetics'
+require "test_helper"
 
 class TreeTest < Test::Unit::TestCase
   def test_literal

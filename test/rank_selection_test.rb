@@ -1,27 +1,6 @@
-require 'rubygems'
-require 'test/unit'
-require 'redgreen'
-require 'genetics'
+require "test_helper"
 
 class RankSelectionTest < Test::Unit::TestCase
-  class SquareTree < Tree
-    arg :x
-
-    DATA = { 1 => 1, 2 => 4, 3 => 9, 4 => 16, 5 => 25, 6 => 36 }
-
-    def fitness
-      d = 0
-      self.class::DATA.each do |x, expected|
-        d += (expected - evaluate(:x => x)).abs
-      end
-      d
-    end
-
-    def ideal?
-      fitness.zero?
-    end
-  end
-
   def test_evolution
     population = Population.new(SquareTree, :select_with => Rank, :size => 10)
     assert_nothing_raised { population.evolve(1) }
