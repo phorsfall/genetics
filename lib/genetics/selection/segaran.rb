@@ -43,16 +43,9 @@ module SegaranVersusTournament
          #next if tree1_index > tree2_index
 
          # Why not use a hash for scoring, with the tree as the key?
-         case tree1.fight(tree2)
-         when :win
-           # Need to make the scoring configurable.
-           scores[tree1_index] += 4
-         when :loose
-           scores[tree2_index] += 4
-         when :draw
-           scores[tree1_index] += 1
-           scores[tree2_index] += 1
-         end
+         result = tree1.fight(tree2)
+         scores[tree1_index] += result[0]
+         scores[tree2_index] += result[1]
        end
      end
 

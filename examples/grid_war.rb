@@ -15,11 +15,14 @@ class GridWarTree < Tree
   end
 
   def fight(competitor)
-    {
-      1 => :win,
-      2 => :loose,
-      0 => :draw
-    }[GridWar.new(self, competitor).play]
+    case GridWar.new(self, competitor).play
+    when 0 # Draw
+      [1, 1]
+    when 1 # Self won
+      [4, 0]
+    when 2 # Competitor won
+      [0, 4]
+    end
   end
 end
 

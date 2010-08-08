@@ -3,7 +3,6 @@
 * Parameterize group size in the versus module.
 * Rename Tree#fight to Tree#vs. (Reflects naming of VersusTournament modules.)
 * Switch to higher fitness == better. Minimizing problems can use -ve fitness.
-* Tree#fight should return the number of points for each player.
 * We only need to check if klass responds to :ideal? once. If it does't, we can save calling Population#fittest each generation.
 
 Ideas/Thoughts

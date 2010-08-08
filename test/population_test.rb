@@ -35,7 +35,7 @@ class PopulationTest < Test::Unit::TestCase
 
   class Player < Tree
     def fight(other)
-      [:win, :loose, :draw].sample
+      Array.new(2) { rand(2) }
     end
   end
 

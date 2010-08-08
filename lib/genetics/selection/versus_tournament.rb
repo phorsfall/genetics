@@ -6,17 +6,10 @@ module VersusTournament
     each_slice(10) do |round|
       round.each do |t1|
         round.each do |t2|
-          next if t1 == t2
-
-          case t1.fight(t2)
-          when :win
-            scores[t1] += 4
-          when :loose
-            scores[t2] += 4
-          when :draw
-            scores[t1] += 1
-            scores[t2] += 1
-          end
+          next if t1.equal?(t2)
+          result = t1.fight(t2)
+          scores[t1] += result[0]
+          scores[t2] += result[1]
         end
       end
       # Sort by score and add the winner of this round to the pool.
