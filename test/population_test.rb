@@ -34,7 +34,7 @@ class PopulationTest < Test::Unit::TestCase
   end
 
   class Player < Tree
-    def fight(other)
+    def vs(other)
       Array.new(2) { rand(2) }
     end
   end

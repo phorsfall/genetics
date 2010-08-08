@@ -14,7 +14,7 @@ class GridWarTree < Tree
     a > b ? 1 : 0
   end
 
-  def fight(competitor)
+  def vs(competitor)
     case GridWar.new(self, competitor).play
     when 0 # Draw
       [1, 1]

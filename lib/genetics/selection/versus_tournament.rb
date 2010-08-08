@@ -7,7 +7,7 @@ module VersusTournament
       round.each do |t1|
         round.each do |t2|
           next if t1.equal?(t2)
-          result = t1.fight(t2)
+          result = t1.vs(t2)
           scores[t1] += result[0]
           scores[t2] += result[1]
         end
