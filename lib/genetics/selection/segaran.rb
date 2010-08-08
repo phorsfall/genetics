@@ -35,7 +35,7 @@ module SegaranVersusTournament
      # Array#combination?
      each_with_index do |tree1, tree1_index|
        each_with_index do |tree2, tree2_index|
-         next if tree1 == tree2
+         next if tree1.equal?(tree2)
 
          # Only play against each other once.
          # This risks evolving a program that is only successful playing as
