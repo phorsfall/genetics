@@ -1,26 +1,21 @@
 module VersusTournament
   def prepare
     @breeding_pool = []
-    # TODO: Using a hash here doesn't work.
-    # Because Tree#hash is overridden to get the expected behaviour
-    # from Array.uniq, all points for trees with the same genes get
-    # assigned to a single instance of that set of genes.
-    # Either reconsider overriding Array#hash (and therefore) the
-    # behaviour in an array, or use another method to count scores.
-    scores = Hash.new(0)
     shuffle!
     each_slice(10) do |round|
-      round.each do |t1|
-        round.each do |t2|
+      scores = Array.new(round.size, 0)
+
+      round.each_with_index do |t1, i1|
+        round.each_with_index do |t2, i2|
           next if t1.equal?(t2)
           result = t1.vs(t2)
-          scores[t1] += result[0]
-          scores[t2] += result[1]
+          scores[i1] += result[0]
+          scores[i2] += result[1]
         end
       end
+
       # Sort by score and add the winner of this round to the pool.
-      @breeding_pool << scores.to_a.sort { |a,b| a[1] <=> b[1] }.transpose[0].last
-      scores.clear
+      @breeding_pool << round.zip(scores).sort { |a,b| a[1] <=> b[1] }.last[0]
     end
   end
 

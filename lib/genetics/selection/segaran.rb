@@ -42,7 +42,6 @@ module SegaranVersusTournament
          # either player 1 OR player 2.
          #next if tree1_index > tree2_index
 
-         # Why not use a hash for scoring, with the tree as the key?
          result = tree1.vs(tree2)
          scores[tree1_index] += result[0]
          scores[tree2_index] += result[1]
