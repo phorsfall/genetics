@@ -11,20 +11,18 @@ class Population < Array
   attr_reader :generation
 
   def evolve(generations = 60)
+    # Hook for modules to do any work they need at the start of each iteration.
+    # Once called, it's assumed that #parents and #fittest are available.
+    prepare
     generations.times do
-      # Hook for modules to do any work they need at the start of each iteration.
-      # Once called, it's assumed that #parents and #fittest are available.
-      prepare
       yield self if block_given?
       break if done?
       generate # Create the next generation.
+      # Called here to ensure that calling #fittest after the last iteration
+      # returns expected results.
+      prepare
       @generation += 1
     end
-    # If we complete the number if requested generations
-    # (rather than exiting when the termination condition is met)
-    # we return the population in a state where #fittest will
-    # not return expected values, as #prepare hasn't been called
-    # since we created the last generation.
     self
   end
 
