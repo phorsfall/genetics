@@ -81,7 +81,7 @@ class Tree
   end
 
   def depth(node = genes)
-    node[0] == :call ? node[2..-1].map { |n| depth(n) }.max + 1 : 0
+    node[0] == :call ? (node[2..-1].map { |n| depth(n) }.max || -1) + 1 : 0
   end
 
   # Does overriding these 3 suggest Tree should inherit from array?
