@@ -1,6 +1,9 @@
 require 'rubygems'
 require 'test/unit'
-require 'redgreen'
+begin
+  require 'redgreen'
+rescue LoadError
+end
 require 'genetics'
 require 'mocha'
 
