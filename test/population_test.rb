@@ -15,12 +15,16 @@ class PopulationTest < Test::Unit::TestCase
     assert_equal 5, population.size
   end
 
+  class BasicTree < Tree
+    def fitness; 0; end
+  end
+
   def test_specifying_the_number_of_generations_to_evolve
-    population = Population.new(SquareTree)
+    population = Population.new(BasicTree)
     population.evolve(1)
-    assert 1, population.generation
+    assert_equal 1, population.generation
     population.evolve(2)
-    assert 3, population.generation
+    assert_equal 3, population.generation
   end
 
   def test_mean_depth
