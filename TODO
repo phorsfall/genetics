@@ -1,4 +1,3 @@
-* Threading for VersusTournament.
 * Parameterize elitism in the replacement module.
 * Parameterize group size in the versus module.
 * Switch to higher fitness == better. Minimizing problems can use -ve fitness.
@@ -6,11 +5,9 @@
 
 Ideas/Thoughts
 
-* Should we try and mutate and cross? Or just do one?
-* Cross-over should return 2 children after doing a subtree swap.
 * Mutate could happen in place?
-* Graphs. e.g. Generations against fitness. Family tree?
-* Parallelism. Tournament selection may be well suited.
+* Graphs. e.g. Generations against fitness. Family tree? Nodes?
+* Parallelism. Tournament selection may be well suited / Threading for VersusTournament.
 * Could implement & (to_proc). Why? If a tree was just a Ruby proc maybe we could do things like: plot(:x => 0..100, :y => 0..100, :function => &tree). Or maybe just implementing call (as an alias of evaluate) would be be good enough.
 
 Longer Term
