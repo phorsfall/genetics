@@ -112,7 +112,7 @@ class Tree
     if rand < 0.7 && !top
       gene2.clone
     else
-      if gene1[0] == :call && gene2[0] == :call
+      if gene1[0] == :call && gene2[0] == :call && !gene2[2..-1].empty?
         gene1[0..1] + gene1[2..-1].map { |g| cross_genes(g, gene2[2..-1].sample, false) }
       else
         gene1.clone
