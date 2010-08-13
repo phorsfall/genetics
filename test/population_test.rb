@@ -23,32 +23,6 @@ class PopulationTest < Test::Unit::TestCase
     assert 3, population.generation
   end
 
-  def test_tournament_selection
-    population = Population.new(SquareTree, :select_with => Tournament)
-    assert population.evolve.fittest.fitness.zero?
-  end
-
-  def test_segaran_rank_selection
-    population = Population.new(SquareTree, :select_with => SegaranRankSelection)
-    assert_nothing_raised { population.evolve(1) }
-  end
-
-  class Player < Tree
-    def vs(other)
-      Array.new(2) { rand(2) }
-    end
-  end
-
-  def test_versus_tournament_selection
-    population = Population.new(Player, :select_with => VersusTournament)
-    assert_nothing_raised { population.evolve(1) }
-  end
-
-  def test_segaran_versus_tournament_selection
-    population = Population.new(Player, :select_with => SegaranVersusTournament)
-    assert_nothing_raised { population.evolve(1) }
-  end
-
   def test_mean_depth
     population = Population.new(SquareTree, :size => 2)
     expected_mean_depth = (population[0].depth + population[1].depth) / 2.0

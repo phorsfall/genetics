@@ -21,3 +21,9 @@ class SquareTree < Tree
     fitness.zero?
   end
 end
+
+class Player < Tree
+  def vs(other)
+    Array.new(2) { rand(2) }
+  end
+end
