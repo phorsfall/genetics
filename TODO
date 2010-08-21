@@ -22,3 +22,64 @@ population.evolve do
 end
 
 Maybe we could check the block's arity to decide whether or not this is an around block?
+
+Implementing "if" when functions have side-effects:
+===================================================
+
+A function is now evaluated using instance_exec (rather than just being called) so that it can access/modify state.
+
+For example, in the Ant Trial problem we want to access state in order to check whether there is food in front of the ant, and we want to modify state by calling functions with side-effects. i.e. move, left, right.
+
+The problem then, is that given the above, the current implementation of "if" doesn't work. Consider this:
+
+[:call, :if, [:call, :food_ahead?], [:call, :move], [:call, :right]]
+
+At present all of arguments passed to "if" are evaluated _before_ they are passed, and the ant will both move and turn right before if is even called.
+
+Here are some ideas to tackle this:
+
+1. Implement if as a node type, rather than a function call.
+
+  e.g. [:if, [:call, :food_ahead?], [:call, :move], [:call, :right]]
+  
+This way in Tree#evaluate_node, we evaluate the conditional node before evaluating only the appropriate true/false node.
+
+Problems with this:
+
+a. :if would be hard coded with some concept of which values are truthy and this wouldn't be easy for sub-classers to change.
+
+b. In the Ant Trail problem, we really want an :if_food_ahead function, which this doesn't allow us to do. Instead we're hoping that something like this will be generated:
+
+[:if, [:call, :food_ahead?], [:call, :move], [:call, :right]]
+
+...which it will, but there'll be a lot of nonsense, such as:
+
+[:if, [:call, :move], [:call, :move], [:call, :right]]
+
+c. We'd need to decide how often to generate an :if node, and include the ability to specify 0 probability.
+
+2. Allow if to be implemented as a function. To do so, the only option seems to be to pass the child nodes into the function, so that they can be evaluated only when needed. e.g.
+
+function :if do |cond, t, f|
+  eval(cond) ? eval(t) : eval(f)
+end
+
+This could be optional, so simple functions can behave as as present. e.g.
+
+function :if, :lazy => true do |cond, t, f|
+  eval(cond) ? eval(t) : eval(f)
+end
+
+One question here is how to deal with args passed to the program. One idea is if you define a lasy function, the you have to add an extra arg for the args. (Urghh...) e.g.
+
+function :if, :lazy => true do |cond, t, f, args|
+  eval(cond, args) ? eval(t, args) : eval(f, args)
+end
+
+That's pretty messy though, so another option might be to yield the node you want evaluating. e.g.
+
+function :if, :lazy => true do |c, t, f|
+  yield(cond) ? yield(t) : yield(f)
+end
+
+In this case, the node would be evaluated in the context from which the function was called, in which the args will be available and can therefore be handled transparently.
