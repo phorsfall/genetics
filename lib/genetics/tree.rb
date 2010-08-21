@@ -8,6 +8,9 @@ end
 class Tree
   @@default_args = [:x, :y]
   @@default_literals = (0..9).to_a
+  # TODO: Use lambda not proc.
+  # Not sure why I used proc, but it changes to a synonym of
+  # Proc.new in Ruby 1.9 so stick with lambda.
   @@default_functions = {
     :+ => { :proc => proc { |a,b| a + b } },
     :* => { :proc => proc { |a,b| a * b } },
