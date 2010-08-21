@@ -13,6 +13,7 @@ Ideas/Thoughts
 Longer Term
 
 * Need to either remove default functions from Tree, or allow a way to remove if no required in sub-classes.
+* Could use the sexp_processor gem if dealing with nested arrays becomes too much.
 * Can the block passed to Population#evolve work as an around filter? e.g.
 
 population.evolve do
