@@ -9,9 +9,9 @@ class Tree
   @@default_args = [:x, :y]
   @@default_literals = (0..9).to_a
   @@default_functions = {
-    :+ => proc { |a,b| a + b },
-    :* => proc { |a,b| a * b },
-    :- => proc { |a,b| a - b }
+    :+ => { :proc => proc { |a,b| a + b } },
+    :* => { :proc => proc { |a,b| a * b } },
+    :- => { :proc => proc { |a,b| a - b } }
   }
 
   def initialize(tree)
@@ -38,9 +38,10 @@ class Tree
     @literals = range.to_a
   end
 
-  def self.function(name, &block)
+  def self.function(name, options = nil, &block)
     @custom_functions ||= {}
-    @custom_functions[name] = block
+    @custom_functions[name] = { :proc => block }
+    @custom_functions[name][:options] = options if options
   end
 
   def self.generate
@@ -53,7 +54,9 @@ class Tree
 
     if rand < fpr && max_depth > 0
       function_name = function_names.sample
-      arg_count = functions[function_name].arity
+      # TODO: Fix that this will be off by one for lazy functions.
+      # Because of the extra lambda passed to eval nodes.
+      arg_count = functions[function_name][:proc].arity
       arg_count = 0 if arg_count == -1
       args = Array.new(arg_count) { random_node(max_depth - 1) }
       [:call, function_name] + args
@@ -142,9 +145,23 @@ class Tree
     # [:arg, 0]
     case node.first
     when :call
-      call_args = node[2..-1].map { |n| evaluate_node(n, args) }
+      func = self.class.functions[node[1]]
+      call_args = nil
+
+      if func[:options] && func[:options][:lazy]
+        call_args = node[2..-1]
+        call_args << lambda { |node| evaluate_node(node, args) }
+        # TODO: Test if Ruby 1.9 allows blocks to be passed to lambdas.
+        # This would mean that when defining a lazy function, you didn't have
+        # to add the extra param for the lambda you use to eval a node.
+        # Which would simplify the checking of arity as it wouldn't need
+        # to allow for this extra arg for lazy functions.
+      else
+        call_args = node[2..-1].map { |n| evaluate_node(n, args) }
+      end
+
       # I _think_ this requires RUBY_VERSION >= 1.8.7.
-      instance_exec *call_args, &self.class.functions[node[1]]
+      instance_exec *call_args, &func[:proc]
     when :lit
       node[1]
     when :arg

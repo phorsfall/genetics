@@ -183,4 +183,37 @@ class TreeTest < Test::Unit::TestCase
     assert_equal 3, population.size
     assert_equal 2, population.uniq.size
   end
+
+  class LazyTree < Tree
+    attr_accessor :counter
+
+    def initialize(*args)
+      @counter = 0
+      super
+    end
+
+    function :lazy_if, :lazy => true do |c,t,f,eval|
+      eval[c] ? eval[t] : eval[f]
+    end
+
+    function :non_lazy_if, :lazy => false do |c,t,f|
+      c ? t : f
+    end
+
+    function :inc do |value|
+      @counter += value
+    end
+  end
+
+  def test_lazy_function_calls
+    tree = LazyTree.new([:call, :lazy_if, [:lit, true], [:call, :inc, [:lit, 1]], [:call, :inc, [:lit, 2]]])
+    tree.evaluate
+    assert_equal 1, tree.counter
+  end
+
+  def test_non_lazy_function_calls
+    tree = LazyTree.new([:call, :non_lazy_if, [:lit, true], [:call, :inc, [:lit, 1]], [:call, :inc, [:lit, 2]]])
+    tree.evaluate
+    assert_equal 3, tree.counter
+  end
 end
