@@ -3,15 +3,30 @@ require 'genetics'
 require "curses"
 require "matrix"
 
-# TODO: Create an Ant class.
-
-class InteractiveAnt
+module Ant
   attr_accessor :orientation, :position, :food_eaten
 
-  def initialize(window)
+  def initialize
     @orientation = 1
     @position = Vector[0,0]
     @food_eaten = 0
+  end
+
+  Move  = 1
+  Left  = 2
+  Right = 3
+
+  North = 0
+  East  = 1
+  South = 2
+  West  = 3
+end
+
+class InteractiveAnt
+  include Ant
+
+  def initialize(window)
+    super()
     @window = window
     @window.keypad = true
   end
@@ -28,15 +43,9 @@ class InteractiveAnt
   end
 end
 
-# TODO: Inherit from Ant, rename to AntBot.
-class Ant < Tree
-  # x, y => init to 0,0
-  # direction => init to east
+class AntBot < Tree
+  include Ant
 
-  # TODO: Move constants to Ant.
-  Move  = 1
-  Left  = 2
-  Right = 3
   literals 1..3
 
   function :food_ahead? do |t,f|
@@ -70,6 +79,10 @@ class Trail
 
   def [](position)
     @cells[position[1]][position[0]]
+  end
+
+  def food_at?(position)
+    self[position] == 1
   end
 
   def self.santa_fe
@@ -106,12 +119,11 @@ class World
     end
   end
 
-  # TODO: Create N,S,E,W constants in Ant.
   Moves = {
-    0 => Vector[0,-1], # N
-    1 => Vector[1,0],  # E
-    2 => Vector[0,1],  # S
-    3 => Vector[-1,0]  # W
+    Ant::North => Vector[0,-1],
+    Ant::East  => Vector[1, 0],
+    Ant::South => Vector[0, 1],
+    Ant::West  => Vector[-1,0]
   }
 
   def tick
@@ -119,7 +131,7 @@ class World
     case @ant.evaluate
     when Ant::Move
       @ant.position = next_position
-      @ant.food_eaten += 1 if food_at?(@ant.position)
+      @ant.food_eaten += 1 if uneaten_food_at?(@ant.position)
     when Ant::Left
       @ant.orientation -= 1
       @ant.orientation %= 4
@@ -143,9 +155,8 @@ class World
     food_at?(next_position)
   end
 
-  def food_at?(position)
-    # TODO: Create a Trail#food_at?(position) method.
-    @trail[position] == 1 && !@path.include?(position)
+  def uneaten_food_at?(position)
+    @trail.food_at?(position ) && !@path.include?(position)
   end
 
   Ants = {
@@ -155,23 +166,28 @@ class World
     3 => "<<"
   }
 
+  module ColourPairs
+    NotVisited = 1
+    Visited    = 2
+    Current    = 3
+  end
+
   def draw
     (0...@trail.width).each do |x|
       (0...@trail.height).each do |y|
         position = Vector[x,y]
 
         pair = if @ant.position == position
-          # TODO: Extract constants for these magic numbers.
-          3 # Current
+          ColourPairs::Current
         elsif @path.include?(position)
-          2 # Visited
+          ColourPairs::Visited
         else
-          1 # Not-visited
+          ColourPairs::NotVisited 
         end
 
         content = if @ant.position == position
           Ants[@ant.orientation]
-        elsif @trail[position] == 1
+        elsif @trail.food_at?(position)
           "()"
         else
           ". "
@@ -191,17 +207,19 @@ class World
   LunaticAntError = Class.new(RuntimeError)
 end
 
-include Curses
+if __FILE__ == $0
+  include Curses
 
-init_screen
-start_color
-init_pair(1, COLOR_WHITE, COLOR_BLACK)
-init_pair(2, COLOR_BLACK, COLOR_YELLOW)
-init_pair(3, COLOR_BLACK, COLOR_RED)
+  init_screen
+  start_color
+  init_pair(World::ColourPairs::NotVisited, COLOR_WHITE, COLOR_BLACK)
+  init_pair(World::ColourPairs::Visited,    COLOR_BLACK, COLOR_YELLOW)
+  init_pair(World::ColourPairs::Current,    COLOR_BLACK, COLOR_RED)
 
-ant = InteractiveAnt.new(stdscr)
-World.new(ant, Trail.santa_fe, stdscr).run
+  ant = InteractiveAnt.new(stdscr)
+  World.new(ant, Trail.santa_fe, stdscr).run
 
-close_screen
+  close_screen
 
-puts "You ate #{ant.food_eaten} pieces of food!"
+  puts "You ate #{ant.food_eaten} pieces of food!"
+end
