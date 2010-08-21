@@ -143,7 +143,8 @@ class Tree
     case node.first
     when :call
       call_args = node[2..-1].map { |n| evaluate_node(n, args) }
-      self.class.functions[node[1]].call(*call_args)
+      # I _think_ this requires RUBY_VERSION >= 1.8.7.
+      instance_exec *call_args, &self.class.functions[node[1]]
     when :lit
       node[1]
     when :arg
