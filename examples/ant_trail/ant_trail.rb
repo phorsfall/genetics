@@ -3,6 +3,8 @@ require 'genetics'
 require "curses"
 require "matrix"
 
+# TODO: Create an Ant class.
+
 class InteractiveAnt
   attr_accessor :orientation, :position, :food_eaten
 
@@ -26,10 +28,12 @@ class InteractiveAnt
   end
 end
 
+# TODO: Inherit from Ant, rename to AntBot.
 class Ant < Tree
   # x, y => init to 0,0
   # direction => init to east
 
+  # TODO: Move constants to Ant.
   Move  = 1
   Left  = 2
   Right = 3
@@ -46,6 +50,7 @@ class Ant < Tree
     # and count how much food is colllected.
     @world = World.new(self, Trail.santa_fe)
     @world.run
+    # TODO: Normalize fitness.
     food_eaten
   end
 end
@@ -68,6 +73,8 @@ class Trail
   end
 
   def self.santa_fe
+    # TODO: Add a 32x32 grid.
+    # TODO: Load from file.
     new([
       [0,1,0,0,0,0,0,0,0,0],
       [0,1,0,0,0,0,0,0,0,0],
@@ -99,6 +106,7 @@ class World
     end
   end
 
+  # TODO: Create N,S,E,W constants in Ant.
   Moves = {
     0 => Vector[0,-1], # N
     1 => Vector[1,0],  # E
@@ -125,6 +133,7 @@ class World
 
   def next_position
     position = @ant.position + Moves[@ant.orientation]
+    # TODO: Roll a Position class that does vector addition and allow this to work:
     # position[0] %= @trail.width
     # position[1] %= @trail.height
     Vector[position[0] % @trail.width, position[1] % @trail.height]
@@ -135,6 +144,7 @@ class World
   end
 
   def food_at?(position)
+    # TODO: Create a Trail#food_at?(position) method.
     @trail[position] == 1 && !@path.include?(position)
   end
 
@@ -151,6 +161,7 @@ class World
         position = Vector[x,y]
 
         pair = if @ant.position == position
+          # TODO: Extract constants for these magic numbers.
           3 # Current
         elsif @path.include?(position)
           2 # Visited
