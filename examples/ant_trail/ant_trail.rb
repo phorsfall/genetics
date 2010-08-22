@@ -128,13 +128,6 @@ class World
   rescue EndOfWorld
   end
 
-  Moves = {
-    Ant::North => Vector[0,-1],
-    Ant::East  => Vector[1, 0],
-    Ant::South => Vector[0, 1],
-    Ant::West  => Vector[-1,0]
-  }
-
   def move_ant(move)
     @path << @ant.position
     case move
@@ -153,6 +146,13 @@ class World
     raise EndOfWorld if @ticks >= @max_ticks
     draw
   end
+
+  Moves = {
+    Ant::North => Vector[0,-1],
+    Ant::East  => Vector[1, 0],
+    Ant::South => Vector[0, 1],
+    Ant::West  => Vector[-1,0]
+  }
 
   def next_position
     position = @ant.position + Moves[@ant.orientation]
