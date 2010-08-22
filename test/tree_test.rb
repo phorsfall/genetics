@@ -63,7 +63,7 @@ class TreeTest < Test::Unit::TestCase
     literals 40..45
   end
 
-  def test_generating_a_random_with_custom_literals
+  def test_generating_a_random_tree_with_custom_literals
     LiteralsTree.stubs(:rand).returns(1)
     Array.any_instance.stubs(:rand).returns(2)
     tree = LiteralsTree.generate
