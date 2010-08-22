@@ -7,7 +7,7 @@ module Ant
   attr_accessor :orientation, :position, :food_eaten
 
   def initialize
-    @orientation = 1
+    @orientation = East
     @position = Vector[0,0]
     @food_eaten = 0
   end
