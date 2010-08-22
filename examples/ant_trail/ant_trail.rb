@@ -12,10 +12,6 @@ module Ant
     @food_eaten = 0
   end
 
-  Move  = 1
-  Left  = 2
-  Right = 3
-
   North = 0
   East  = 1
   South = 2
@@ -31,14 +27,21 @@ class InteractiveAnt
     @window.keypad = true
   end
 
+  def explore(trail)
+    @world = World.new(self, trail, @window)
+    @world.run
+  end
+
   def evaluate
     case @window.getch
     when Curses::KEY_UP
-      Ant::Move
+      @world.move_ant(:forward)
     when Curses::KEY_LEFT
-      Ant::Left
+      @world.move_ant(:left)
     when Curses::KEY_RIGHT
-      Ant::Right
+      @world.move_ant(:right)
+    when ?q
+      raise World::EndOfWorld
     end
   end
 end
@@ -104,19 +107,25 @@ class Trail
 end
 
 class World
-  def initialize(ant, trail, window)
+  def initialize(ant, trail, window, max_ticks = 400)
     @ant = ant
     @trail = trail
     @ticks = 0
     @path = []
     @window = window
+    @max_ticks = max_ticks
   end
 
-  def run(ticks = 400)
-    ticks.times do
-      draw
-      tick
-    end
+  def run
+    draw
+    # Ideally, we'd just call evaluate here while @ticks < MAX_TICKS.
+    # But because the ant can make more than one move within evaluate
+    # she may well make a few moves more than MAX_TICKS before we next
+    # check the termination condition.
+    # Instead we raise an exception in World#move_ant as soon as the tick
+    # limit is reached and rescue it here. It's a GOTO, but it works.
+    loop { @ant.evaluate }
+  rescue EndOfWorld
   end
 
   Moves = {
@@ -126,21 +135,23 @@ class World
     Ant::West  => Vector[-1,0]
   }
 
-  def tick
+  def move_ant(move)
     @path << @ant.position
-    case @ant.evaluate
-    when Ant::Move
+    case move
+    when :forward
       @ant.position = next_position
       @ant.food_eaten += 1 if uneaten_food_at?(@ant.position)
-    when Ant::Left
+    when :left
       @ant.orientation -= 1
       @ant.orientation %= 4
-    when Ant::Right
+    when :right
       @ant.orientation += 1
       @ant.orientation %= 4
     else raise LunaticAntError
     end
     @ticks += 1
+    raise EndOfWorld if @ticks >= @max_ticks
+    draw
   end
 
   def next_position
@@ -204,6 +215,7 @@ class World
     @window.refresh
   end
 
+  EndOfWorld      = Class.new(RuntimeError)
   LunaticAntError = Class.new(RuntimeError)
 end
 
@@ -217,9 +229,8 @@ if __FILE__ == $0
   init_pair(World::ColourPairs::Current,    COLOR_BLACK, COLOR_RED)
 
   ant = InteractiveAnt.new(stdscr)
-  World.new(ant, Trail.santa_fe, stdscr).run
+  ant.explore(Trail.santa_fe)
 
   close_screen
-
   puts "You ate #{ant.food_eaten} pieces of food!"
 end
