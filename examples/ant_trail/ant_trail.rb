@@ -162,8 +162,8 @@ class World
     Vector[position[0] % @trail.width, position[1] % @trail.height]
   end
 
-  def food_ahead?
-    food_at?(next_position)
+  def uneaten_food_ahead?
+    uneaten_food_at?(next_position)
   end
 
   def uneaten_food_at?(position)
