@@ -216,4 +216,12 @@ class TreeTest < Test::Unit::TestCase
     tree.evaluate
     assert_equal 3, tree.counter
   end
+
+  def test_generating_a_function_call_to_a_lazy_function
+    LazyTree.stubs(:rand).returns(0, 1, 1, 1, 1, 1, 1)
+    Array.any_instance.stubs(:rand).returns(1, 2, 3)
+    LazyTree.stubs(:function_names).returns(stub(:sample => :lazy_if))
+    tree = LazyTree.generate
+    assert_equal [:call, :lazy_if, [:lit, 1], [:lit, 2], [:lit, 3]], tree.genes
+  end
 end

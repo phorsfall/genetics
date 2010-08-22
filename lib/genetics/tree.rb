@@ -57,10 +57,13 @@ class Tree
 
     if rand < fpr && max_depth > 0
       function_name = function_names.sample
-      # TODO: Fix that this will be off by one for lazy functions.
-      # Because of the extra lambda passed to eval nodes.
-      arg_count = functions[function_name][:proc].arity
+      function = functions[function_name]
+      arg_count = function[:proc].arity
+      # Handle lambdas with no goal posts in Ruby 1.8.
+      # i.e. lambda {}.arity == -1
       arg_count = 0 if arg_count == -1
+      # Handle the extra parameter lazy functions accept.
+      arg_count -= 1 if function[:options] && function[:options][:lazy]
       args = Array.new(arg_count) { random_node(max_depth - 1) }
       [:call, function_name] + args
     elsif rand < apr
