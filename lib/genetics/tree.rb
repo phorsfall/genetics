@@ -50,6 +50,7 @@ class Tree
     if max_depth.zero?
       @end_node_selector ||= begin
         nodes = {}
+        nodes[:call] = fpr unless function_names(true).empty?
         nodes[:arg] = apr unless class_args.empty?
         nodes[:lit] = lpr unless class_literals.empty?
         RouletteWheel.new(nodes)
@@ -157,8 +158,25 @@ class Tree
     @custom_functions || {}
   end
 
-  def self.function_names
-    functions.keys
+  def self.function_names(terminal = false)
+    # HACK: Experimenting with the idea of allowing function with an arity of 0 to be terminals.
+    # This is certanily the wrong place to put it.
+    # TODO: Add the normalized arity of a function to the @custom_functions hash.
+    # (i.e. Having taken Ruby version and lazy/not lazy into account.)
+    # We won't duplicate it here, and we also won't need to recalculate it each time
+    # we generate a node.
+    if terminal
+      functions.select do |key, value|
+        proc = value[:proc]
+        if value[:options] && value[:options][:lazy]
+          proc.arity == 1
+        else
+          proc.arity.zero?
+        end
+      end.keys
+    else
+      functions.keys
+    end
   end
 
   def evaluate_node(node, args)
