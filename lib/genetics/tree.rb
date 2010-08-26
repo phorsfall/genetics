@@ -51,53 +51,38 @@ class Tree
     new random_node
   end
 
-  def node_types_for_selection(max_depth)
-    # How do we handle the fact that there maybe no literals and/or args?
-    # We can assume there will be some functions.
+  def self.node_type_selector(max_depth)
+    # These are relative, it's not nessacary for them to total one.
+    fpr = 0.5  # Probability of function
+    apr = 0.25 # Probability of arg
+    lpr = 0.25 # Probability of literal
 
-    # One idea is to generate a hash describing the probabilty of each node
-    # type based on some probability values specified for each as well as
-    # their presence. We could then do roulette type selection to pick one.
-    # This might make also make it easier to reason about the relative probability
-    # of each type been selected. It's not clear that the current implementation
-    # effectively means:
-    # :call 50%
-    # :lit  25%
-    # :arg  25%
-    #
-    # Until the last branch, when it's:
-    # :lit 50%
-    # :arg 50%
-    #
-
-    # So, maybe:
-    types = {}
-    types[:lit]  = 0.4 unless class_literals.empty?
-    types[:arg]  = 0.5 unless class_args.empty?
-    types[:call] = 0.5 unless max_depth.zero?
-    types
+    # TODO: Extract the creation of the nodes hash in to a method.
+    if max_depth.zero?
+      @end_node_selector ||= begin
+        nodes = {}
+        nodes[:arg] = apr unless class_args.empty?
+        nodes[:lit] = lpr unless class_literals.empty?
+        RouletteWheel.new(nodes)
+      end
+    else
+      @node_selector ||= begin
+        nodes = {}
+        nodes[:call] = fpr
+        nodes[:arg] = apr unless class_args.empty?
+        nodes[:lit] = lpr unless class_literals.empty?
+        RouletteWheel.new(nodes)
+      end
+    end
   end
 
-  def random_node_type(max_depth)
-    # Perhaps node_types_for_selection could return
-    # an instance of RouletteWheel which could look
-    # much like a hash, but with a sample method
-    # to perform selection. It could transparantly
-    # handle generating cumulative probabilities
-    # and any memoization etc.
-    # Could this be reused within rank selection?
-    # Is there something similar already in Facets?
-    # RouletteWheel could be tested elsewhere,
-    # random_node_type might be a nice method to mock
-    # when testing tree generation?
-    node_types_for_selection(max_depth).sample
+  def self.random_node_type(max_depth)
+    node_type_selector(max_depth).sample
   end
 
   def self.random_node(max_depth = 4)
-    fpr = 0.5 # Probability of function
-    apr = 0.5 # Probability of arg
-
-    if rand < fpr && max_depth > 0
+    case random_node_type(max_depth)
+    when :call
       function_name = function_names.sample
       function = functions[function_name]
       arg_count = function[:proc].arity
@@ -108,9 +93,9 @@ class Tree
       arg_count -= 1 if function[:options] && function[:options][:lazy]
       args = Array.new(arg_count) { random_node(max_depth - 1) }
       [:call, function_name] + args
-    elsif rand < apr
+    when :arg
       [:arg, class_args.sample]
-    else
+    when :lit
       [:lit, class_literals.sample]
     end
   end

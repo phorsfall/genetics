@@ -46,14 +46,14 @@ class TreeTest < Test::Unit::TestCase
   end
 
   def test_generating_a_random_tree
-    BasicTree.stubs(:rand).returns(0, 1, 1, 1, 1)
+    RouletteWheel.any_instance.stubs(:rand).returns(0, 0.9, 0.9)
     Array.any_instance.stubs(:rand).returns(0, 7, 8)
     tree = BasicTree.generate
     assert_equal 15, tree.evaluate
   end
 
   def test_generating_a_random_tree_with_args
-    BasicTree.stubs(:rand).returns(0, 1, 0, 1, 0)
+    RouletteWheel.any_instance.stubs(:rand).returns(0, 0.6, 0.6)
     Array.any_instance.stubs(:rand).returns(0, 0, 1)
     tree = BasicTree.generate
     assert_equal 30, tree.evaluate(:x => 10, :y => 20)
@@ -64,7 +64,7 @@ class TreeTest < Test::Unit::TestCase
   end
 
   def test_generating_a_random_tree_with_custom_literals
-    LiteralsTree.stubs(:rand).returns(1)
+    RouletteWheel.any_instance.stubs(:rand).returns(0.9)
     Array.any_instance.stubs(:rand).returns(2)
     tree = LiteralsTree.generate
     assert_equal 42, tree.evaluate
@@ -124,7 +124,7 @@ class TreeTest < Test::Unit::TestCase
   end
 
   def test_generating_a_function_call_to_a_proc_with_an_arity_of_minus_one
-    CustomFunctionsTree.stubs(:rand).returns(0)
+    RouletteWheel.any_instance.stubs(:rand).returns(0)
     CustomFunctionsTree.any_instance.stubs(:rand).returns(99)
     CustomFunctionsTree.stubs(:function_names).returns(stub(:sample => :rand))
     tree = CustomFunctionsTree.generate
@@ -132,7 +132,8 @@ class TreeTest < Test::Unit::TestCase
   end
 
   def test_mutation
-    Tree.stubs(:rand).returns(1, 1, 0, 1, 1)
+    Tree.stubs(:rand).returns(1, 1, 0)
+    RouletteWheel.any_instance.stubs(:rand).returns(0.9)
     Array.any_instance.stubs(:rand).returns(3)
     tree = Tree.new([:call, :*, [:lit, 2], [:call, :+, [:lit, 1], [:lit, 1]]])
     assert_equal [:call, :*, [:lit, 2], [:lit, 3]], tree.mutate.genes
@@ -218,7 +219,7 @@ class TreeTest < Test::Unit::TestCase
   end
 
   def test_generating_a_function_call_to_a_lazy_function
-    LazyTree.stubs(:rand).returns(0, 1, 1, 1, 1, 1, 1)
+    RouletteWheel.any_instance.stubs(:rand).returns(0, 0.9, 0.9, 0.9)
     Array.any_instance.stubs(:rand).returns(1, 2, 3)
     LazyTree.stubs(:function_names).returns(stub(:sample => :lazy_if))
     tree = LazyTree.generate
