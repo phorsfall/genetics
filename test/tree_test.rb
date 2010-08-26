@@ -42,6 +42,7 @@ class TreeTest < Test::Unit::TestCase
   end
 
   class BasicTree < Tree
+    # TODO: What's the point of this?
     # Inherits default args, literals and functions. i.e.
   end
 
@@ -124,6 +125,7 @@ class TreeTest < Test::Unit::TestCase
   end
 
   def test_generating_a_function_call_to_a_proc_with_an_arity_of_minus_one
+    # TODO: Wouldn't it be better just to test that the expected tree is generated here?
     RouletteWheel.any_instance.stubs(:rand).returns(0)
     CustomFunctionsTree.any_instance.stubs(:rand).returns(99)
     CustomFunctionsTree.stubs(:function_names).returns(stub(:sample => :rand))
