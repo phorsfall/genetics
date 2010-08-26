@@ -1,6 +1,10 @@
 require "test_helper"
 
 class RouletteWheelTest < Test::Unit::TestCase
+  # These tests will probably only pass on Ruby 1.9
+  # as they expect the order of the hash passed to
+  # RouletteWheel.new to be preserve.
+
   def test_probability_distribution
     rw = RouletteWheel.new(:a => 2, :b => 6, :c => 12)
     assert_equal [[:a, 0.1], [:b, 0.4], [:c, 1.0]], rw.probability_distribution
