@@ -6,10 +6,11 @@ require "matrix"
 module Ant
   attr_accessor :orientation, :position, :food_eaten
 
-  def initialize
+  def initialize(*args)
     @orientation = East
     @position = Vector[0,0]
     @food_eaten = 0
+    super
   end
 
   North = 0
@@ -49,21 +50,35 @@ end
 class AntBot < Tree
   include Ant
 
-  literals 1..3
-
-  function :food_ahead? do |t,f|
-    @world.food_ahead? ? t : f
+  function :food_ahead?, :lazy => true do |t,f,eval|
+    @world.uneaten_food_ahead? ? eval[t] : eval[f]
   end
 
-  # TODO: Add the prog n funcs
+  function :left do
+    @world.move_ant(:left)
+  end
+
+  function :right do
+    @world.move_ant(:right)
+  end
+
+  function :forward do
+    @world.move_ant(:forward)
+  end
+
+  function :block, :lazy => true do |n1, n2, eval|
+    eval[n1]
+    eval[n2]
+  end
 
   def fitness
     # Have the ant make 400 steps on the trail
     # and count how much food is colllected.
-    @world = World.new(self, Trail.santa_fe)
+    @world = World.new(self, Trail.santa_fe, Curses.stdscr, 200)
     @world.run
     # TODO: Normalize fitness.
-    food_eaten
+    # TODO: Sould be trail.food_count (or similar) rather than magic number.
+    9 - food_eaten
   end
 end
 
@@ -230,6 +245,19 @@ if __FILE__ == $0
 
   ant = InteractiveAnt.new(stdscr)
   ant.explore(Trail.santa_fe)
+
+  #ant = AntBot.new([:call, :block, [:call, :forward], [:call, :block, [:call, :left], [:call, :block, [:call, :forward], [:call, :right]]]])
+  #ant = AntBot.new([:call, :block, [:call, :block, [:call, :forward], [:call, :block, [:call, :food_ahead?, [:call, :right], [:call, :left]], [:call, :block, [:call, :block, [:call, :right], [:call, :right]], [:call, :forward]]]], [:call, :food_ahead?, [:call, :block, [:call, :food_ahead?, [:call, :right], [:call, :left]], [:call, :food_ahead?, [:call, :block, [:call, :forward], [:call, :block, [:call, :food_ahead?, [:call, :right], [:call, :right]], [:call, :food_ahead?, [:call, :forward], [:call, :food_ahead?, [:call, :right], [:call, :block, [:call, :forward], [:call, :food_ahead?, [:call, :right], [:call, :block, [:call, :right], [:call, :forward]]]]]]]], [:call, :left]]], [:call, :left]]])
+  #ant = AntBot.generate
+  #ant.fitness
+
+  # population = Population.new(AntBot, :select_with => Tournament)
+  # population.evolve do
+  #   print "."
+  #   $stdout.flush
+  # end
+  # winner = population.fittest
+  # puts winner.genes.inspect
 
   close_screen
   puts "You ate #{ant.food_eaten} pieces of food!"
