@@ -4,6 +4,10 @@ require 'genetics'
 
 class PolynomialTree < Tree
   args :x, :y
+  literals 1..9
+  function(:+) { |a,b| a + b }
+  function(:*) { |a,b| a * b }
+  function(:-) { |a,b| a - b }
 
   def self.data
     @data ||= begin

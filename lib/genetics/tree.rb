@@ -6,17 +6,6 @@ class Array
 end
 
 class Tree
-  @@default_args = [:x, :y]
-  @@default_literals = (0..9).to_a
-  # TODO: Use lambda not proc.
-  # Not sure why I used proc, but it changes to a synonym of
-  # Proc.new in Ruby 1.9 so stick with lambda.
-  @@default_functions = {
-    :+ => { :proc => proc { |a,b| a + b } },
-    :* => { :proc => proc { |a,b| a * b } },
-    :- => { :proc => proc { |a,b| a - b } }
-  }
-
   def initialize(tree)
     @tree = tree
   end
@@ -68,7 +57,7 @@ class Tree
     else
       @node_selector ||= begin
         nodes = {}
-        nodes[:call] = fpr
+        nodes[:call] = fpr unless functions.empty?
         nodes[:arg] = apr unless class_args.empty?
         nodes[:lit] = lpr unless class_literals.empty?
         RouletteWheel.new(nodes)
@@ -157,15 +146,15 @@ class Tree
   end
 
   def self.class_args
-    @args || @@default_args
+    @args || []
   end
 
   def self.class_literals
-    @literals || @@default_literals
+    @literals || []
   end
 
   def self.functions
-    @custom_functions ? @@default_functions.merge(@custom_functions) : @@default_functions
+    @custom_functions || {}
   end
 
   def self.function_names

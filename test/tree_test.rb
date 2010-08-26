@@ -7,43 +7,38 @@ class TreeTest < Test::Unit::TestCase
   end
 
   def test_addition
-    tree = Tree.new([:call, :+, [:lit, 100], [:lit, 200]])
+    tree = BasicTree.new([:call, :+, [:lit, 100], [:lit, 200]])
     assert_equal 300, tree.evaluate
   end
 
   def test_subtraction
-    tree = Tree.new([:call, :-, [:lit, 10], [:lit, 2]])
+    tree = BasicTree.new([:call, :-, [:lit, 10], [:lit, 2]])
     assert_equal 8, tree.evaluate
   end
 
   def test_multiplication
-    tree = Tree.new([:call, :*, [:lit, 10], [:lit, 10]])
+    tree = BasicTree.new([:call, :*, [:lit, 10], [:lit, 10]])
     assert_equal 100, tree.evaluate
   end
 
   def test_nested_function_calls
-    tree = Tree.new([:call, :*, [:call, :+, [:lit, 2], [:lit, 3]], [:call, :+, [:lit, 4], [:lit, 5]]])
+    tree = BasicTree.new([:call, :*, [:call, :+, [:lit, 2], [:lit, 3]], [:call, :+, [:lit, 4], [:lit, 5]]])
     assert_equal 45, tree.evaluate
   end
 
   def test_x_arg
-    tree = Tree.new([:arg, :x])
+    tree = BasicTree.new([:arg, :x])
     assert_equal 100, tree.evaluate(:x => 100)
   end
 
   def test_y_arg
-    tree = Tree.new([:arg, :y])
+    tree = BasicTree.new([:arg, :y])
     assert_equal 100, tree.evaluate(:y => 100)
   end
 
   def test_multiplication_with_args
-    tree = Tree.new([:call, :*, [:arg, :x], [:arg, :y]])
+    tree = BasicTree.new([:call, :*, [:arg, :x], [:arg, :y]])
     assert_equal 27, tree.evaluate(:x => 3, :y => 9)
-  end
-
-  class BasicTree < Tree
-    # TODO: What's the point of this?
-    # Inherits default args, literals and functions. i.e.
   end
 
   def test_generating_a_random_tree
@@ -114,16 +109,6 @@ class TreeTest < Test::Unit::TestCase
     assert_equal 8, tree.evaluate
   end
 
-  def test_default_functions_are_still_available
-    tree = CustomFunctionsTree.new([:call, :*, [:lit, 2], [:lit, 4]])
-    assert_equal 8, tree.evaluate
-  end
-
-  def test_replacing_default_function
-    tree = CustomFunctionsTree.new([:call, :+, [:lit, 10], [:lit, 7]])
-    assert_equal 3, tree.evaluate
-  end
-
   def test_generating_a_function_call_to_a_proc_with_an_arity_of_minus_one
     # TODO: Wouldn't it be better just to test that the expected tree is generated here?
     RouletteWheel.any_instance.stubs(:rand).returns(0)
@@ -134,27 +119,27 @@ class TreeTest < Test::Unit::TestCase
   end
 
   def test_mutation
-    Tree.stubs(:rand).returns(1, 1, 0)
+    BasicTree.stubs(:rand).returns(1, 1, 0)
     RouletteWheel.any_instance.stubs(:rand).returns(0.9)
     Array.any_instance.stubs(:rand).returns(3)
-    tree = Tree.new([:call, :*, [:lit, 2], [:call, :+, [:lit, 1], [:lit, 1]]])
+    tree = BasicTree.new([:call, :*, [:lit, 2], [:call, :+, [:lit, 1], [:lit, 1]]])
     assert_equal [:call, :*, [:lit, 2], [:lit, 3]], tree.mutate.genes
   end
 
   def test_mutation_clones_genes_when_no_mutation_occurs
-    Tree.stubs(:rand).returns(1)
+    BasicTree.stubs(:rand).returns(1)
     #Array.any_instance.stubs(:rand).returns(0)
-    original = Tree.new([:lit, 5])
+    original = BasicTree.new([:lit, 5])
     mutant = original.mutate
     assert_equal [:lit, 5], mutant.genes
     assert !mutant.genes.equal?(original.genes)
   end
 
   def test_crossover
-    Tree.stubs(:rand).returns(0, 1, 0)
+    BasicTree.stubs(:rand).returns(0, 1, 0)
     Array.any_instance.stubs(:rand).returns(0, 1)
-    parent1 = Tree.new([:call, :+, [:lit, 1], [:lit, 2]])
-    parent2 = Tree.new([:call, :*, [:lit, 3], [:lit, 4]])
+    parent1 = BasicTree.new([:call, :+, [:lit, 1], [:lit, 2]])
+    parent2 = BasicTree.new([:call, :*, [:lit, 3], [:lit, 4]])
     offspring = parent1.cross_with(parent2)
     assert_equal [:call, :+, [:lit, 1], [:lit, 4]], offspring.genes
     assert !offspring.genes.equal?(parent1.genes)
@@ -162,27 +147,27 @@ class TreeTest < Test::Unit::TestCase
   end
 
   def test_crossover_of_function_with_arity_of_zero
-    Tree.stubs(:rand).returns(0, 0)
-    parent1 = Tree.new([:call, :+, [:lit, 1], [:lit, 2]])
+    BasicTree.stubs(:rand).returns(0, 0)
+    parent1 = BasicTree.new([:call, :+, [:lit, 1], [:lit, 2]])
     parent2 = CustomFunctionsTree.new([:call, :rand])
     offspring = parent1.cross_with(parent2)
     assert_equal [:call, :+, [:lit, 1], [:lit, 2]], offspring.genes
   end
 
   def test_depth
-    assert_equal 0, Tree.new([:lit, 1]).depth
+    assert_equal 0, BasicTree.new([:lit, 1]).depth
     assert_equal 0, CustomFunctionsTree.new([:call, :rand]).depth
-    assert_equal 1, Tree.new([:call, :*, [:lit, 1], [:lit, 1]]).depth
-    assert_equal 2, Tree.new([:call, :*, [:call, :+, [:lit, 1], [:lit, 1]], [:lit, 1]]).depth
+    assert_equal 1, BasicTree.new([:call, :*, [:lit, 1], [:lit, 1]]).depth
+    assert_equal 2, BasicTree.new([:call, :*, [:call, :+, [:lit, 1], [:lit, 1]], [:lit, 1]]).depth
   end
 
   def test_equality
-    assert_not_equal Tree.new([:lit, 1]), Tree.new([:lit, 2])
-    assert_equal Tree.new([:lit, 1]), Tree.new([:lit, 1])
+    assert_not_equal BasicTree.new([:lit, 1]), BasicTree.new([:lit, 2])
+    assert_equal BasicTree.new([:lit, 1]), BasicTree.new([:lit, 1])
   end
 
   def test_array_membership
-    population = [Tree.new([:lit, 1]), Tree.new([:lit, 1]), Tree.new([:lit, 2])]
+    population = [BasicTree.new([:lit, 1]), BasicTree.new([:lit, 1]), BasicTree.new([:lit, 2])]
     assert_equal 3, population.size
     assert_equal 2, population.uniq.size
   end
@@ -194,6 +179,8 @@ class TreeTest < Test::Unit::TestCase
       @counter = 0
       super
     end
+
+    literals 0..9
 
     function :lazy_if, :lazy => true do |c,t,f,eval|
       eval[c] ? eval[t] : eval[f]

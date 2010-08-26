@@ -7,8 +7,24 @@ end
 require 'genetics'
 require 'mocha'
 
+class BasicTree < Tree
+  args :x, :y
+  literals 0..9
+  function(:+) { |a,b| a + b }
+  function(:*) { |a,b| a * b }
+  function(:-) { |a,b| a - b }
+
+  def fitness
+    0
+  end
+end
+
 class SquareTree < Tree
   arg :x
+  literals 0..9
+  function(:+) { |a,b| a + b }
+  function(:*) { |a,b| a * b }
+  function(:-) { |a,b| a - b }
 
   DATA = { 1 => 1, 2 => 4, 3 => 9, 4 => 16, 5 => 25, 6 => 36 }
 
@@ -26,6 +42,8 @@ class SquareTree < Tree
 end
 
 class Player < Tree
+  arg :x
+
   def vs(other)
     Array.new(2) { rand(2) }
   end

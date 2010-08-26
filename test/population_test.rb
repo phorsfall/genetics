@@ -15,10 +15,6 @@ class PopulationTest < Test::Unit::TestCase
     assert_equal 5, population.size
   end
 
-  class BasicTree < Tree
-    def fitness; 0; end
-  end
-
   def test_specifying_the_number_of_generations_to_evolve
     population = Population.new(BasicTree)
     population.evolve(1)
