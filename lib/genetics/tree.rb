@@ -33,54 +33,50 @@ class Tree
   def self.function(name, options = nil, &block)
     @custom_functions ||= {}
     @custom_functions[name] = { :proc => block }
-    @custom_functions[name][:options] = options if options
+    @custom_functions[name][:lazy] = true if options && options[:lazy]
+    arg_count = block.arity
+    # Handle lambdas with no goal posts in Ruby 1.8.
+    # i.e. lambda {}.arity == -1
+    arg_count = 0 if arg_count == -1
+    # Handle the extra parameter lazy functions accept.
+    arg_count -= 1 if @custom_functions[name][:lazy]
+    @custom_functions[name][:arg_count] = arg_count
   end
 
   def self.generate
     new random_node
   end
 
-  def self.node_type_selector(max_depth)
+  def self.node_type_selector(terminal)
+    if terminal
+      @terminal_selector ||= RouletteWheel.new(node_selection_probabilities(true))
+    else
+      @selector ||= RouletteWheel.new(node_selection_probabilities(false))
+    end
+  end
+
+  def self.node_selection_probabilities(termial)
     # These are relative, it's not nessacary for them to total one.
     fpr = 0.5  # Probability of function
     apr = 0.25 # Probability of arg
     lpr = 0.25 # Probability of literal
 
-    # TODO: Extract the creation of the nodes hash in to a method.
-    if max_depth.zero?
-      @end_node_selector ||= begin
-        nodes = {}
-        nodes[:call] = fpr unless function_names(true).empty?
-        nodes[:arg] = apr unless class_args.empty?
-        nodes[:lit] = lpr unless class_literals.empty?
-        RouletteWheel.new(nodes)
-      end
-    else
-      @node_selector ||= begin
-        nodes = {}
-        nodes[:call] = fpr unless functions.empty?
-        nodes[:arg] = apr unless class_args.empty?
-        nodes[:lit] = lpr unless class_literals.empty?
-        RouletteWheel.new(nodes)
-      end
-    end
+    pr = {}
+    pr[:call] = fpr unless function_names(termial).empty?
+    pr[:arg]  = apr unless class_args.empty?
+    pr[:lit]  = lpr unless class_literals.empty?
+    pr
   end
 
-  def self.random_node_type(max_depth)
-    node_type_selector(max_depth).sample
+  def self.random_node_type(terminal)
+    node_type_selector(terminal).sample
   end
 
   def self.random_node(max_depth = 4)
-    case random_node_type(max_depth)
+    case random_node_type(max_depth.zero?)
     when :call
-      function_name = function_names.sample
-      function = functions[function_name]
-      arg_count = function[:proc].arity
-      # Handle lambdas with no goal posts in Ruby 1.8.
-      # i.e. lambda {}.arity == -1
-      arg_count = 0 if arg_count == -1
-      # Handle the extra parameter lazy functions accept.
-      arg_count -= 1 if function[:options] && function[:options][:lazy]
+      function_name = function_names(max_depth.zero?).sample
+      arg_count = functions[function_name][:arg_count]
       args = Array.new(arg_count) { random_node(max_depth - 1) }
       [:call, function_name] + args
     when :arg
@@ -158,25 +154,8 @@ class Tree
     @custom_functions || {}
   end
 
-  def self.function_names(terminal = false)
-    # HACK: Experimenting with the idea of allowing function with an arity of 0 to be terminals.
-    # This is certanily the wrong place to put it.
-    # TODO: Add the normalized arity of a function to the @custom_functions hash.
-    # (i.e. Having taken Ruby version and lazy/not lazy into account.)
-    # We won't duplicate it here, and we also won't need to recalculate it each time
-    # we generate a node.
-    if terminal
-      functions.select do |key, value|
-        proc = value[:proc]
-        if value[:options] && value[:options][:lazy]
-          proc.arity == 1
-        else
-          proc.arity.zero?
-        end
-      end.keys
-    else
-      functions.keys
-    end
+  def self.function_names(terminal)
+    terminal ?  functions.select { |k,v| v[:arg_count].zero? }.keys : functions.keys
   end
 
   def evaluate_node(node, args)
@@ -188,7 +167,7 @@ class Tree
       func = self.class.functions[node[1]]
       call_args = nil
 
-      if func[:options] && func[:options][:lazy]
+      if func[:lazy]
         call_args = node[2..-1]
         call_args << lambda { |node| evaluate_node(node, args) }
         # TODO: Test if Ruby 1.9 allows blocks to be passed to lambdas.

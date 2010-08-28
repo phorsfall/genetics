@@ -118,6 +118,13 @@ class TreeTest < Test::Unit::TestCase
     assert_equal 99, tree.evaluate
   end
 
+  def test_functions_with_an_arity_of_zero_can_be_used_as_terminals
+    RouletteWheel.any_instance.stubs(:rand).returns(0)
+    Array.any_instance.stubs(:rand).returns(1, 1, 1, 1, 0)
+    tree = CustomFunctionsTree.generate
+    assert_equal [:call, :-, [:call, :-, [:call, :-, [:call, :-, [:call, :rand]]]]], tree.genes
+  end
+
   def test_mutation
     BasicTree.stubs(:rand).returns(1, 1, 0)
     RouletteWheel.any_instance.stubs(:rand).returns(0.9)
@@ -210,7 +217,7 @@ class TreeTest < Test::Unit::TestCase
   def test_generating_a_function_call_to_a_lazy_function
     RouletteWheel.any_instance.stubs(:rand).returns(0, 0.9, 0.9, 0.9)
     Array.any_instance.stubs(:rand).returns(1, 2, 3)
-    LazyTree.stubs(:function_names).returns(stub(:sample => :lazy_if))
+    LazyTree.stubs(:function_names).returns(stub(:sample => :lazy_if, :empty? => false))
     tree = LazyTree.generate
     assert_equal [:call, :lazy_if, [:lit, 1], [:lit, 2], [:lit, 3]], tree.genes
   end
