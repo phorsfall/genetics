@@ -78,8 +78,6 @@ class AntBot < Tree
       # and count how much food is colllected.
       @world = World.new(self, trail, Curses.stdscr)
       @world.run
-      # TODO: Normalize fitness.
-      # TODO: Sould be trail.food_count (or similar) rather than magic number.
       trail.food_count - food_eaten
     end
   end
