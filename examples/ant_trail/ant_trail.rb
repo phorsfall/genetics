@@ -71,7 +71,16 @@ class AntBot < Tree
     eval[n2]
   end
 
+  # TODO: Add an explore (or similar) method that takes a bool indicating wether to draw the world or not.
+  # Fitness would call AntBot#explore(false), when watching the results of evolution, we just
+  # call AntBot#explore.
+
+  # TODO: Build a measure of efficiency into fitness.
+  # i.e. The less steps the ant take the better.
+  # AntBot#explore should probably return [food_eaten, steps/ticks].
+
   def fitness
+    # TODO: That I have to memoize this points to the fact the I should remove Tree#memoized_fitness.
     @fitness ||= begin
       trail = Trail.santa_fe
       # Have the ant make 400 steps on the trail
@@ -209,6 +218,8 @@ class World
   end
 
   def uneaten_food_at?(position)
+    # TODO: Resolve that the ant gets progressively slower the longer it explores the world.
+    # I think this is happens as more points are stored in @path.
     @trail.food_at?(position ) && !@path.include?(position)
   end
 
@@ -272,6 +283,12 @@ if __FILE__ == $0
 
   ant = InteractiveAnt.new(stdscr)
   ant.explore(Trail.santa_fe)
+
+  # TODO: Add command line options:
+  # demo:    Evolve ants, periodically run the fittest ant on the console to observe progress.
+  # evolve:  Evolve an ant, perhaps save genes to disk.
+  # run:     Run a previously evolved ant (or a number of ants) on the console.
+  # explore: InteractiveAnt.
 
   #ant = AntBot.new([:call, :block, [:call, :forward], [:call, :block, [:call, :left], [:call, :block, [:call, :forward], [:call, :right]]]])
   #ant = AntBot.new([:call, :block, [:call, :block, [:call, :forward], [:call, :block, [:call, :food_ahead?, [:call, :right], [:call, :left]], [:call, :block, [:call, :block, [:call, :right], [:call, :right]], [:call, :forward]]]], [:call, :food_ahead?, [:call, :block, [:call, :food_ahead?, [:call, :right], [:call, :left]], [:call, :food_ahead?, [:call, :block, [:call, :forward], [:call, :block, [:call, :food_ahead?, [:call, :right], [:call, :right]], [:call, :food_ahead?, [:call, :forward], [:call, :food_ahead?, [:call, :right], [:call, :block, [:call, :forward], [:call, :food_ahead?, [:call, :right], [:call, :block, [:call, :right], [:call, :forward]]]]]]]], [:call, :left]]], [:call, :left]]])
