@@ -72,13 +72,16 @@ class AntBot < Tree
   end
 
   def fitness
-    # Have the ant make 400 steps on the trail
-    # and count how much food is colllected.
-    @world = World.new(self, Trail.santa_fe, Curses.stdscr, 200)
-    @world.run
-    # TODO: Normalize fitness.
-    # TODO: Sould be trail.food_count (or similar) rather than magic number.
-    9 - food_eaten
+    @fitness ||= begin
+      trail = Trail.santa_fe
+      # Have the ant make 400 steps on the trail
+      # and count how much food is colllected.
+      @world = World.new(self, trail, Curses.stdscr)
+      @world.run
+      # TODO: Normalize fitness.
+      # TODO: Sould be trail.food_count (or similar) rather than magic number.
+      trail.food_count - food_eaten
+    end
   end
 end
 
@@ -101,6 +104,10 @@ class Trail
 
   def food_at?(position)
     self[position] == 1
+  end
+
+  def food_count
+    @cells.flatten.select { |cell| cell == 1 }.size
   end
 
   def self.santa_fe
