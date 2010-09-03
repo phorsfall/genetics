@@ -71,22 +71,22 @@ class AntBot < Tree
     eval[n2]
   end
 
-  # TODO: Add an explore (or similar) method that takes a bool indicating wether to draw the world or not.
-  # Fitness would call AntBot#explore(false), when watching the results of evolution, we just
-  # call AntBot#explore.
-
   # TODO: Build a measure of efficiency into fitness.
   # i.e. The less steps the ant take the better.
   # AntBot#explore should probably return [food_eaten, steps/ticks].
+
+  def run(trail, window = nil)
+    # Have the ant make 400 steps on the trail
+    # and count how much food is colllected.
+    @world = World.new(self, trail, window)
+    @world.run
+  end
 
   def fitness
     # TODO: That I have to memoize this points to the fact the I should remove Tree#memoized_fitness.
     @fitness ||= begin
       trail = Trail.santa_fe
-      # Have the ant make 400 steps on the trail
-      # and count how much food is colllected.
-      @world = World.new(self, trail, Curses.stdscr)
-      @world.run
+      run(trail, false)
       trail.food_count - food_eaten
     end
   end
@@ -237,6 +237,7 @@ class World
   end
 
   def draw
+    return unless @window
     (0...@trail.width).each do |x|
       (0...@trail.height).each do |y|
         position = Vector[x,y]
@@ -273,36 +274,62 @@ class World
 end
 
 if __FILE__ == $0
-  include Curses
+  require 'optparse'
+  mode = :run
 
+  OptionParser.new do |opts|
+    opts.on("-i", "--interactive", "Be an ant, explore the trail") do
+      mode = :interactive
+    end
+
+    opts.on("-e", "--evolve", "Evolve a new ant") do
+      mode = :evolve
+    end
+
+    opts.on("-r", "--run", "Watch an ant run the trail") do
+      mode = :run
+    end
+
+    opts.on("-g", "--generate", "Watch a random ant run the trail") do
+      mode = :generate
+    end
+
+    opts.on_tail("-h", "--help", "Show this message") do
+      puts opts
+      exit
+    end
+  end.parse!
+
+  include Curses
   init_screen
   start_color
   init_pair(World::ColourPairs::NotVisited, COLOR_WHITE, COLOR_BLACK)
   init_pair(World::ColourPairs::Visited,    COLOR_BLACK, COLOR_YELLOW)
   init_pair(World::ColourPairs::Current,    COLOR_BLACK, COLOR_RED)
 
-  ant = InteractiveAnt.new(stdscr)
-  ant.explore(Trail.santa_fe)
-
-  # TODO: Add command line options:
-  # demo:    Evolve ants, periodically run the fittest ant on the console to observe progress.
-  # evolve:  Evolve an ant, perhaps save genes to disk.
-  # run:     Run a previously evolved ant (or a number of ants) on the console.
-  # explore: InteractiveAnt.
-
-  #ant = AntBot.new([:call, :block, [:call, :forward], [:call, :block, [:call, :left], [:call, :block, [:call, :forward], [:call, :right]]]])
-  #ant = AntBot.new([:call, :block, [:call, :block, [:call, :forward], [:call, :block, [:call, :food_ahead?, [:call, :right], [:call, :left]], [:call, :block, [:call, :block, [:call, :right], [:call, :right]], [:call, :forward]]]], [:call, :food_ahead?, [:call, :block, [:call, :food_ahead?, [:call, :right], [:call, :left]], [:call, :food_ahead?, [:call, :block, [:call, :forward], [:call, :block, [:call, :food_ahead?, [:call, :right], [:call, :right]], [:call, :food_ahead?, [:call, :forward], [:call, :food_ahead?, [:call, :right], [:call, :block, [:call, :forward], [:call, :food_ahead?, [:call, :right], [:call, :block, [:call, :right], [:call, :forward]]]]]]]], [:call, :left]]], [:call, :left]]])
-  #ant = AntBot.generate
-  #ant.fitness
-
-  # population = Population.new(AntBot, :select_with => Tournament)
-  # population.evolve do
-  #   print "."
-  #   $stdout.flush
-  # end
-  # winner = population.fittest
-  # puts winner.genes.inspect
+  case mode
+  when :interactive
+    ant = InteractiveAnt.new(stdscr)
+    ant.explore(Trail.santa_fe)
+  when :evolve
+    population = Population.new(AntBot, :select_with => Tournament)
+    population.evolve(5) do
+      print "."
+      $stdout.flush
+    end
+    winner = population.fittest
+    puts winner.genes.inspect
+  when :run
+    #ant = AntBot.new([:call, :block, [:call, :forward], [:call, :block, [:call, :left], [:call, :block, [:call, :forward], [:call, :right]]]])
+    ant = AntBot.new([:call, :block, [:call, :block, [:call, :forward], [:call, :block, [:call, :food_ahead?, [:call, :right], [:call, :left]], [:call, :block, [:call, :block, [:call, :right], [:call, :right]], [:call, :forward]]]], [:call, :food_ahead?, [:call, :block, [:call, :food_ahead?, [:call, :right], [:call, :left]], [:call, :food_ahead?, [:call, :block, [:call, :forward], [:call, :block, [:call, :food_ahead?, [:call, :right], [:call, :right]], [:call, :food_ahead?, [:call, :forward], [:call, :food_ahead?, [:call, :right], [:call, :block, [:call, :forward], [:call, :food_ahead?, [:call, :right], [:call, :block, [:call, :right], [:call, :forward]]]]]]]], [:call, :left]]], [:call, :left]]])
+    ant.run(Trail.santa_fe, stdscr)
+  when :generate
+    AntBot.generate.run(Trail.santa_fe, stdscr)
+  # when :demo?
+    # Show the ant after each generation?
+  end
 
   close_screen
-  puts "You ate #{ant.food_eaten} pieces of food!"
+  # Allow an exit_message to be set?
+  #puts "You ate #{ant.food_eaten} pieces of food!"
 end
