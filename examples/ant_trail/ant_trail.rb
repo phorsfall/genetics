@@ -76,8 +76,6 @@ class AntBot < Tree
   # AntBot#explore should probably return [food_eaten, steps/ticks].
 
   def run(trail, window = nil)
-    # Have the ant make 400 steps on the trail
-    # and count how much food is colllected.
     @world = World.new(self, trail, window)
     @world.run
   end
