@@ -293,6 +293,7 @@ end
 if __FILE__ == $0
   require 'optparse'
   mode = :run
+  exit_message = nil
 
   OptionParser.new do |opts|
     opts.on("-i", "--interactive", "Be an ant, explore the trail") { mode = :interactive }
@@ -316,7 +317,8 @@ if __FILE__ == $0
   case mode
   when :interactive
     ant = InteractiveAnt.new(stdscr)
-    ant.run(Trail.santa_fe)
+    food_eaten = ant.run(Trail.santa_fe)
+    exit_message = "You ate #{ant.food_eaten} pieces of food!"
   when :evolve, :demo
     population = Population.new(AntBot, :select_with => Tournament)
     population.evolve do |p|
@@ -328,8 +330,7 @@ if __FILE__ == $0
         p.fittest.run(Trail.santa_fe, stdscr)
       end
     end
-    winner = population.fittest
-    puts winner.genes.inspect
+    exit_message = population.fittest.genes.inspect
   when :run
     #ant = AntBot.new([:call, :block, [:call, :forward], [:call, :block, [:call, :left], [:call, :block, [:call, :forward], [:call, :right]]]])
     ant = AntBot.new([:call, :food_ahead?, [:call, :forward], [:call, :block, [:call, :block, [:call, :forward], [:call, :block, [:call, :right], [:call, :forward]]], [:call, :block, [:call, :food_ahead?, [:call, :food_ahead?, [:call, :forward], [:call, :forward]], [:call, :food_ahead?, [:call, :forward], [:call, :left]]], [:call, :food_ahead?, [:call, :food_ahead?, [:call, :forward], [:call, :forward]], [:call, :food_ahead?, [:call, :forward], [:call, :left]]]]]])
@@ -340,6 +341,5 @@ if __FILE__ == $0
   end
 
   close_screen
-  # Allow an exit_message to be set?
-  #puts "You ate #{ant.food_eaten} pieces of food!"
+  puts exit_message if exit_message
 end
