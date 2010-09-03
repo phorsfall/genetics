@@ -17,6 +17,10 @@ module Ant
     @food_eaten = 0
   end
 
+  def inspect
+    "#<#{self.class.name} @food_eaten=#{food_eaten} @position=#{position} @orientation=#{orientation}>"
+  end
+
   North = 0
   East  = 1
   South = 2
@@ -277,6 +281,7 @@ class World
     end
     @window.attron(Curses.color_pair(1))
     @window.setpos(@trail.height + 2, 0)
+    @window.deleteln
     @window.addstr(@ant.inspect)
     @window.refresh
   end
