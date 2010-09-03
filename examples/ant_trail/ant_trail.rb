@@ -28,7 +28,7 @@ class InteractiveAnt
     @window.keypad = true
   end
 
-  def explore(trail)
+  def run(trail)
     @world = World.new(self, trail, @window)
     @world.run
   end
@@ -310,7 +310,7 @@ if __FILE__ == $0
   case mode
   when :interactive
     ant = InteractiveAnt.new(stdscr)
-    ant.explore(Trail.santa_fe)
+    ant.run(Trail.santa_fe)
   when :evolve
     population = Population.new(AntBot, :select_with => Tournament)
     population.evolve(5) do
