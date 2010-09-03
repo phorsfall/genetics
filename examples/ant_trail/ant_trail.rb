@@ -103,6 +103,10 @@ class Trail
     @cells.size
   end
 
+  def size
+    width * height
+  end
+
   def [](position)
     @cells[position[1]][position[0]]
   end
@@ -160,7 +164,7 @@ class World
     @ant = ant
     @trail = trail
     @ticks = 0
-    @path = []
+    @visited = Array.new(trail.size, 0)
     @window = window
     @max_ticks = max_ticks
   end
@@ -177,10 +181,18 @@ class World
   rescue EndOfWorld
   end
 
+  def visit(position)
+    @visited[position[1] * @trail.width + position[0]] = 1
+  end
+
+  def visited?(position)
+    @visited[position[1] * @trail.width + position[0]] == 1
+  end
+
   def move_ant(move)
-    @path << @ant.position
     case move
     when :forward
+      visit @ant.position
       @ant.position = next_position
       @ant.food_eaten += 1 if uneaten_food_at?(@ant.position)
     when :left
@@ -216,9 +228,7 @@ class World
   end
 
   def uneaten_food_at?(position)
-    # TODO: Resolve that the ant gets progressively slower the longer it explores the world.
-    # I think this is happens as more points are stored in @path.
-    @trail.food_at?(position ) && !@path.include?(position)
+    @trail.food_at?(position) && !visited?(position)
   end
 
   Ants = {
@@ -242,10 +252,10 @@ class World
 
         pair = if @ant.position == position
           ColourPairs::Current
-        elsif @path.include?(position)
+        elsif visited? position
           ColourPairs::Visited
         else
-          ColourPairs::NotVisited 
+          ColourPairs::NotVisited
         end
 
         content = if @ant.position == position
