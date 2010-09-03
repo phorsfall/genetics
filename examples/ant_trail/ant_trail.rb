@@ -7,10 +7,14 @@ module Ant
   attr_accessor :orientation, :position, :food_eaten
 
   def initialize(*args)
+    reset
+    super
+  end
+
+  def reset
     @orientation = East
     @position = Vector[0,0]
     @food_eaten = 0
-    super
   end
 
   North = 0
@@ -294,6 +298,10 @@ if __FILE__ == $0
       mode = :evolve
     end
 
+    opts.on("-d", "--demo", "Same as evolve, but shows the fittest running the trail after each generation") do
+      mode = :demo
+    end
+
     opts.on("-r", "--run", "Watch an ant run the trail") do
       mode = :run
     end
@@ -319,11 +327,16 @@ if __FILE__ == $0
   when :interactive
     ant = InteractiveAnt.new(stdscr)
     ant.run(Trail.santa_fe)
-  when :evolve
+  when :evolve, :demo
     population = Population.new(AntBot, :select_with => Tournament)
-    population.evolve(5) do
-      print "."
-      $stdout.flush
+    population.evolve(50) do |p|
+      if mode == :evolve
+        print "."
+        $stdout.flush
+      elsif mode == :demo
+        p.fittest.reset
+        p.fittest.run(Trail.santa_fe, stdscr)
+      end
     end
     winner = population.fittest
     puts winner.genes.inspect
@@ -333,8 +346,6 @@ if __FILE__ == $0
     ant.run(Trail.santa_fe, stdscr)
   when :generate
     AntBot.generate.run(Trail.santa_fe, stdscr)
-  # when :demo?
-    # Show the ant after each generation?
   end
 
   close_screen
