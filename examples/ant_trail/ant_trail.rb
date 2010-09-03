@@ -329,7 +329,7 @@ if __FILE__ == $0
     ant.run(Trail.santa_fe)
   when :evolve, :demo
     population = Population.new(AntBot, :select_with => Tournament)
-    population.evolve(50) do |p|
+    population.evolve do |p|
       if mode == :evolve
         print "."
         $stdout.flush
