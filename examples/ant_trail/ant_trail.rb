@@ -292,15 +292,16 @@ end
 
 if __FILE__ == $0
   require 'optparse'
-  mode = :run
+  options = { :mode => :run }
   exit_message = nil
 
   OptionParser.new do |opts|
-    opts.on("-i", "--interactive", "Be an ant, explore the trail") { mode = :interactive }
-    opts.on("-e", "--evolve", "Evolve an ant population") { mode = :evolve }
-    opts.on("-d", "--demo", "Same as evolve, but shows the fittest running the trail after each generation") { mode = :demo }
-    opts.on("-r", "--run", "Watch a previously evolved ant run the trail") { mode = :run }
-    opts.on("-g", "--generate", "Watch a randomly generated ant run the trail") { mode = :generate }
+    opts.on("-i", "--interactive", "Be an ant, explore the trail") { options[:mode] = :interactive }
+    opts.on("-e", "--evolve", "Evolve an ant population") { options[:mode] = :evolve }
+    opts.on("-d", "--demo", "Same as evolve, but shows the fittest running the trail after each generation") { options[:mode] = :demo }
+    opts.on("-r", "--run", "Watch a previously evolved ant run the trail") { options[:mode] = :run }
+    opts.on("-g", "--generate", "Watch a randomly generated ant run the trail") { options[:mode] = :generate }
+    opts.on("-f", "--for generations", "The number of generations to evolve when using -e or -d") { |n| options[:generations] = n.to_i }
     opts.on_tail("-h", "--help", "Show this message") do
       puts opts
       exit
@@ -314,18 +315,19 @@ if __FILE__ == $0
   init_pair(World::ColourPairs::Visited,    COLOR_BLACK, COLOR_YELLOW)
   init_pair(World::ColourPairs::Current,    COLOR_BLACK, COLOR_RED)
 
-  case mode
+  case options[:mode]
   when :interactive
     ant = InteractiveAnt.new(stdscr)
     food_eaten = ant.run(Trail.santa_fe)
     exit_message = "You ate #{ant.food_eaten} pieces of food!"
   when :evolve, :demo
     population = Population.new(AntBot, :select_with => Tournament)
-    population.evolve do |p|
-      if mode == :evolve
+    generations = options[:generations] || 10
+    population.evolve(generations) do |p|
+      if options[:mode] == :evolve
         print "."
         $stdout.flush
-      elsif mode == :demo
+      elsif options[:mode] == :demo
         # It would be cool to show this in a separate thread so evolution can
         # continue in the background.
         p.fittest.reset
