@@ -326,6 +326,8 @@ if __FILE__ == $0
         print "."
         $stdout.flush
       elsif mode == :demo
+        # It would be cool to show this in a separate thread so evolution can
+        # continue in the background.
         p.fittest.reset
         p.fittest.run(Trail.santa_fe, stdscr)
       end
