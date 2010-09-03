@@ -302,48 +302,68 @@ if __FILE__ == $0
     opts.on("-r", "--run", "Watch a previously evolved ant run the trail") { options[:mode] = :run }
     opts.on("-g", "--generate", "Watch a randomly generated ant run the trail") { options[:mode] = :generate }
     opts.on("-f", "--for generations", "The number of generations to evolve when using -e or -d") { |n| options[:generations] = n.to_i }
+    opts.on("-v", "--verbose", "Show extra detail when evolving a population") { |n| options[:verbose] = true }
     opts.on_tail("-h", "--help", "Show this message") do
       puts opts
       exit
     end
   end.parse!
 
-  include Curses
-  init_screen
-  start_color
-  init_pair(World::ColourPairs::NotVisited, COLOR_WHITE, COLOR_BLACK)
-  init_pair(World::ColourPairs::Visited,    COLOR_BLACK, COLOR_YELLOW)
-  init_pair(World::ColourPairs::Current,    COLOR_BLACK, COLOR_RED)
+  def with_curses
+    include Curses
+    init_screen
+    start_color
+    init_pair(World::ColourPairs::NotVisited, COLOR_WHITE, COLOR_BLACK)
+    init_pair(World::ColourPairs::Visited,    COLOR_BLACK, COLOR_YELLOW)
+    init_pair(World::ColourPairs::Current,    COLOR_BLACK, COLOR_RED)
+    yield
+  ensure
+    close_screen
+  end
 
   case options[:mode]
   when :interactive
-    ant = InteractiveAnt.new(stdscr)
-    food_eaten = ant.run(Trail.santa_fe)
-    exit_message = "You ate #{ant.food_eaten} pieces of food!"
+    with_curses do
+      ant = InteractiveAnt.new(stdscr)
+      food_eaten = ant.run(Trail.santa_fe)
+      exit_message = "You ate #{ant.food_eaten} pieces of food!"
+    end
   when :evolve, :demo
     population = Population.new(AntBot, :select_with => Tournament)
     generations = options[:generations] || 10
-    population.evolve(generations) do |p|
-      if options[:mode] == :evolve
-        print "."
-        $stdout.flush
-      elsif options[:mode] == :demo
-        # It would be cool to show this in a separate thread so evolution can
-        # continue in the background.
-        p.fittest.reset
-        p.fittest.run(Trail.santa_fe, stdscr)
+    if options[:mode] == :evolve
+      population.evolve(generations) do |p|
+        if options[:verbose]
+          puts "#{p.generation}: #{p.fittest.fitness}"
+        else
+          print "."
+          $stdout.flush
+        end
+      end
+      print "\n"
+    elsif options[:mode] == :demo
+      with_curses do
+        population.evolve(generations) do |p|
+          # It would be cool to show this in a separate thread so evolution can
+          # continue in the background.
+          p.fittest.reset
+          p.fittest.run(Trail.santa_fe, stdscr)
+        end
       end
     end
     exit_message = population.fittest.genes.inspect
   when :run
-    #ant = AntBot.new([:call, :block, [:call, :forward], [:call, :block, [:call, :left], [:call, :block, [:call, :forward], [:call, :right]]]])
-    ant = AntBot.new([:call, :food_ahead?, [:call, :forward], [:call, :block, [:call, :block, [:call, :forward], [:call, :block, [:call, :right], [:call, :forward]]], [:call, :block, [:call, :food_ahead?, [:call, :food_ahead?, [:call, :forward], [:call, :forward]], [:call, :food_ahead?, [:call, :forward], [:call, :left]]], [:call, :food_ahead?, [:call, :food_ahead?, [:call, :forward], [:call, :forward]], [:call, :food_ahead?, [:call, :forward], [:call, :left]]]]]])
-    #ant = AntBot.new([:call, :block, [:call, :block, [:call, :forward], [:call, :block, [:call, :food_ahead?, [:call, :right], [:call, :left]], [:call, :block, [:call, :block, [:call, :right], [:call, :right]], [:call, :forward]]]], [:call, :food_ahead?, [:call, :block, [:call, :food_ahead?, [:call, :right], [:call, :left]], [:call, :food_ahead?, [:call, :block, [:call, :forward], [:call, :block, [:call, :food_ahead?, [:call, :right], [:call, :right]], [:call, :food_ahead?, [:call, :forward], [:call, :food_ahead?, [:call, :right], [:call, :block, [:call, :forward], [:call, :food_ahead?, [:call, :right], [:call, :block, [:call, :right], [:call, :forward]]]]]]]], [:call, :left]]], [:call, :left]]])
-    ant.run(Trail.santa_fe, stdscr)
+    with_curses do
+      #ant = AntBot.new([:call, :block, [:call, :forward], [:call, :block, [:call, :left], [:call, :block, [:call, :forward], [:call, :right]]]])
+      ant = AntBot.new([:call, :food_ahead?, [:call, :forward], [:call, :block, [:call, :block, [:call, :forward], [:call, :block, [:call, :right], [:call, :forward]]], [:call, :block, [:call, :food_ahead?, [:call, :food_ahead?, [:call, :forward], [:call, :forward]], [:call, :food_ahead?, [:call, :forward], [:call, :left]]], [:call, :food_ahead?, [:call, :food_ahead?, [:call, :forward], [:call, :forward]], [:call, :food_ahead?, [:call, :forward], [:call, :left]]]]]])
+      #ant = AntBot.new([:call, :block, [:call, :block, [:call, :forward], [:call, :block, [:call, :food_ahead?, [:call, :right], [:call, :left]], [:call, :block, [:call, :block, [:call, :right], [:call, :right]], [:call, :forward]]]], [:call, :food_ahead?, [:call, :block, [:call, :food_ahead?, [:call, :right], [:call, :left]], [:call, :food_ahead?, [:call, :block, [:call, :forward], [:call, :block, [:call, :food_ahead?, [:call, :right], [:call, :right]], [:call, :food_ahead?, [:call, :forward], [:call, :food_ahead?, [:call, :right], [:call, :block, [:call, :forward], [:call, :food_ahead?, [:call, :right], [:call, :block, [:call, :right], [:call, :forward]]]]]]]], [:call, :left]]], [:call, :left]]])
+      ant.run(Trail.santa_fe, stdscr)
+    end
   when :generate
-    AntBot.generate.run(Trail.santa_fe, stdscr)
+    with_curses do
+      AntBot.generate.run(Trail.santa_fe, stdscr)
+    end
   end
 
-  close_screen
   puts exit_message if exit_message
 end
