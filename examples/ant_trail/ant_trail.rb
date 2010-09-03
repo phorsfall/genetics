@@ -297,10 +297,10 @@ if __FILE__ == $0
 
   OptionParser.new do |opts|
     opts.on("-i", "--interactive", "Be an ant, explore the trail") { mode = :interactive }
-    opts.on("-e", "--evolve", "Evolve a new ant") { mode = :evolve }
+    opts.on("-e", "--evolve", "Evolve an ant population") { mode = :evolve }
     opts.on("-d", "--demo", "Same as evolve, but shows the fittest running the trail after each generation") { mode = :demo }
-    opts.on("-r", "--run", "Watch an ant run the trail") { mode = :run }
-    opts.on("-g", "--generate", "Watch a random ant run the trail") { mode = :generate }
+    opts.on("-r", "--run", "Watch a previously evolved ant run the trail") { mode = :run }
+    opts.on("-g", "--generate", "Watch a randomly generated ant run the trail") { mode = :generate }
     opts.on_tail("-h", "--help", "Show this message") do
       puts opts
       exit
