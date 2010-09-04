@@ -297,7 +297,6 @@ end
 if __FILE__ == $0
   require 'optparse'
   options = { :mode => :run }
-  exit_message = nil
 
   OptionParser.new do |opts|
     opts.on("-i", "--interactive", "Be an ant, explore the trail") { options[:mode] = :interactive }
@@ -327,11 +326,13 @@ if __FILE__ == $0
 
   case options[:mode]
   when :interactive
+    food_eaten = 0
     with_curses do
       ant = InteractiveAnt.new(stdscr)
-      food_eaten = ant.run(Trail.santa_fe)
-      exit_message = "You ate #{ant.food_eaten} pieces of food!"
+      ant.run(Trail.santa_fe)
+      food_eaten = ant.food_eaten
     end
+    puts "You ate #{food_eaten} pieces of food!"
   when :evolve, :demo
     population = Population.new(AntBot, :select_with => Tournament, :size => 200)
     generations = options[:generations] || 10
@@ -355,7 +356,7 @@ if __FILE__ == $0
         end
       end
     end
-    exit_message = population.fittest.genes.inspect
+    puts population.fittest.genes.inspect
   when :run
     with_curses do
       # This is a complete, albeit not optimal solution.
@@ -386,6 +387,4 @@ if __FILE__ == $0
       AntBot.generate.run(Trail.santa_fe, stdscr)
     end
   end
-
-  puts exit_message if exit_message
 end
