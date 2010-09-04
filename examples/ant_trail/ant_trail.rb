@@ -93,8 +93,12 @@ class AntBot < Tree
     @fitness ||= begin
       trail = Trail.santa_fe
       run(trail, false)
-      trail.food_count - food_eaten
+      trail.food_count - food_eaten + depth/100.0
     end
+  end
+
+  def ideal?
+    fitness < 1
   end
 end
 
@@ -329,7 +333,7 @@ if __FILE__ == $0
       exit_message = "You ate #{ant.food_eaten} pieces of food!"
     end
   when :evolve, :demo
-    population = Population.new(AntBot, :select_with => Tournament)
+    population = Population.new(AntBot, :select_with => Tournament, :size => 200)
     generations = options[:generations] || 10
     if options[:mode] == :evolve
       population.evolve(generations) do |p|
@@ -354,9 +358,27 @@ if __FILE__ == $0
     exit_message = population.fittest.genes.inspect
   when :run
     with_curses do
-      #ant = AntBot.new([:call, :block, [:call, :forward], [:call, :block, [:call, :left], [:call, :block, [:call, :forward], [:call, :right]]]])
-      ant = AntBot.new([:call, :food_ahead?, [:call, :forward], [:call, :block, [:call, :block, [:call, :forward], [:call, :block, [:call, :right], [:call, :forward]]], [:call, :block, [:call, :food_ahead?, [:call, :food_ahead?, [:call, :forward], [:call, :forward]], [:call, :food_ahead?, [:call, :forward], [:call, :left]]], [:call, :food_ahead?, [:call, :food_ahead?, [:call, :forward], [:call, :forward]], [:call, :food_ahead?, [:call, :forward], [:call, :left]]]]]])
-      #ant = AntBot.new([:call, :block, [:call, :block, [:call, :forward], [:call, :block, [:call, :food_ahead?, [:call, :right], [:call, :left]], [:call, :block, [:call, :block, [:call, :right], [:call, :right]], [:call, :forward]]]], [:call, :food_ahead?, [:call, :block, [:call, :food_ahead?, [:call, :right], [:call, :left]], [:call, :food_ahead?, [:call, :block, [:call, :forward], [:call, :block, [:call, :food_ahead?, [:call, :right], [:call, :right]], [:call, :food_ahead?, [:call, :forward], [:call, :food_ahead?, [:call, :right], [:call, :block, [:call, :forward], [:call, :food_ahead?, [:call, :right], [:call, :block, [:call, :right], [:call, :forward]]]]]]]], [:call, :left]]], [:call, :left]]])
+      # This is a complete, albeit not optimal solution.
+      # It took ~2.5 hours to evolve and appeared in the 6787th generation.
+      # Here are the main paramaters used:
+      # Max tree depth: 4
+      # Population size: 200
+      # Selection: Tournament (Rounds size: 10)
+      # Fitness included a small anti-bloat adjustment.
+      # Functions used: food_ahead?, forward, right, left, block.
+      # The ant made 400 steps in the world.
+      ant = AntBot.new([:call, :block, [:call, :food_ahead?,
+        [:call, :block, [:call, :block, [:call, :forward], [:call, :forward]],
+        [:call, :food_ahead?, [:call, :food_ahead?, [:call, :block,[:call, :food_ahead?,[:call, :forward], [:call, :right]],
+        [:call, :food_ahead?, [:call, :right], [:call, :right]]],
+        [:call, :food_ahead?, [:call, :block, [:call, :forward], [:call, :left]], [:call, :food_ahead?, [:call, :left], [:call, :left]]]],
+        [:call, :right]]], [:call, :right]],
+        [:call, :block, [:call, :block, [:call, :food_ahead?, [:call, :food_ahead?, [:call, :block, [:call, :forward], [:call, :forward]],
+        [:call, :block, [:call, :forward], [:call, :forward]]], [:call, :left]], [:call, :left]],
+        [:call, :food_ahead?, [:call, :block, [:call, :food_ahead?, [:call, :forward],
+        [:call, :block, [:call, :food_ahead?, [:call, :left], [:call, :right]], [:call, :left]]],
+        [:call, :food_ahead?, [:call, :forward], [:call, :block, [:call, :food_ahead?, [:call, :left], [:call, :right]],
+        [:call, :left]]]], [:call, :block, [:call, :right], [:call, :forward]]]]])
       ant.run(Trail.santa_fe, stdscr)
     end
   when :generate
