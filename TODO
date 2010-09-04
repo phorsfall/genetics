@@ -1,5 +1,4 @@
 * The Rank selection module should use RouletteWheel to perform selection.
-* Remove the half-baked memoization of Tree#evaluate.
 * Consider whether to bother supporting Ruby 1.8.
 * Parameterize elitism in the replacement module.
 * Parameterize group size in the versus module.

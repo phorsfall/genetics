@@ -17,11 +17,13 @@ class PolynomialTree < Tree
   end
 
   def fitness
-    d = 0
-    self.class.data.each do |x, y, expected|
-      d += (expected - evaluate(:x => x, :y => y)).abs
+    @fitness ||= begin
+      d = 0
+      self.class.data.each do |x, y, expected|
+        d += (expected - evaluate(:x => x, :y => y)).abs
+      end
+      d
     end
-    d
   end
 
   def ideal?
