@@ -11,7 +11,10 @@ Ideas/Thoughts
 * Graphs. e.g. Generations against fitness. Family tree? Nodes?
 * Parallelism. Tournament selection may be well suited / Threading for VersusTournament.
 * Could implement & (to_proc). Why? If a tree was just a Ruby proc maybe we could do things like: plot(:x => 0..100, :y => 0..100, :function => &tree). Or maybe just implementing call (as an alias of evaluate) would be be good enough.
+* Tree#dump & Tree#load.
 * Make it possible to persist an entire population so evolution can be restarted.
+* What to do about duplicate trees in populations.
+* Max. tree depth needs to be configurable.
 
 Longer Term
 
