@@ -79,17 +79,12 @@ class AntBot < Tree
     eval[n2]
   end
 
-  # TODO: Build a measure of efficiency into fitness.
-  # i.e. The less steps the ant take the better.
-  # AntBot#explore should probably return [food_eaten, steps/ticks].
-
   def run(trail, window = nil)
     @world = World.new(self, trail, window)
     @world.run
   end
 
   def fitness
-    # TODO: That I have to memoize this points to the fact the I should remove Tree#memoized_fitness.
     @fitness ||= begin
       trail = Trail.santa_fe
       run(trail, false)
@@ -132,7 +127,6 @@ class Trail
   end
 
   def self.santa_fe
-    # TODO: Load from file.
     new([
       [0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
       [0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
@@ -229,9 +223,6 @@ class World
 
   def next_position
     position = @ant.position + Moves[@ant.orientation]
-    # TODO: Roll a Position class that does vector addition and allow this to work:
-    # position[0] %= @trail.width
-    # position[1] %= @trail.height
     Vector[position[0] % @trail.width, position[1] % @trail.height]
   end
 
@@ -349,8 +340,6 @@ if __FILE__ == $0
     elsif options[:mode] == :demo
       with_curses do
         population.evolve(generations) do |p|
-          # It would be cool to show this in a separate thread so evolution can
-          # continue in the background.
           p.fittest.reset
           p.fittest.run(Trail.santa_fe, stdscr)
         end
