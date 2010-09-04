@@ -14,6 +14,18 @@ class GridWarTree < Tree
     a > b ? 1 : 0
   end
 
+  function :+ do |a,b|
+    a + b
+  end
+
+  function :- do |a,b|
+    a - b
+  end
+
+  function :* do |a,b|
+    a * b
+  end
+
   def vs(competitor)
     case GridWar.new(self, competitor).play
     when 0 # Draw
