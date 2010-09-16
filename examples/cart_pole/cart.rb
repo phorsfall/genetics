@@ -29,7 +29,6 @@ class Cart
   end
 
   def reset
-    # TODO: Re-use in initialize.
     @body.p = CP::Vec2.new(Simulation::WIDTH/2, Simulation::HEIGHT-100)
     @pole.p = CP::Vec2.new(Simulation::WIDTH/2, Simulation::HEIGHT-100-(POLE_LENGTH/2))
     @body.v = CP::ZERO_VEC_2
@@ -41,27 +40,10 @@ class Cart
   end
 
   def thrust(direction)
-    # -1, 0, 1 = :left, :none, :right.
-    # t = case direction
-    # when :left
-    #   -THRUST
-    # when :right
-    #   THRUST
-    # else
-    #   0
-    # end
     @body.force = CP::Vec2.new(THRUST*direction, 0)
   end
 
   def offset
-    (Simulation::WIDTH/2 - @body.p.x).abs
+    Simulation::WIDTH/2 - @body.p.x
   end
-
-  # def draw
-  #   @window.draw_rect(@body.p.x, @body.p.y, WIDTH, HEIGHT, COLOUR)
-  #   @window.rotate((@pole.a/Math::PI)*180, @pole.p.x, @pole.p.y) do
-  #     c = @pole.a.abs > 0.21 ? Gosu::Color::RED : COLOUR
-  #     @window.draw_rect(@pole.p.x, @pole.p.y, 5, POLE_LENGTH, c)
-  #   end
-  # end
 end

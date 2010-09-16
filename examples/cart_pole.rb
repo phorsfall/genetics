@@ -18,9 +18,9 @@ if __FILE__ == $0
   options = { :mode => :run }
 
   OptionParser.new do |opts|
-    opts.on("-i", "--interactive", "Be an ant, explore the trail") { options[:mode] = :interactive }
-    opts.on("-e", "--evolve", "Evolve an ant population") { options[:mode] = :evolve }
-    opts.on("-r", "--run", "Watch a previously evolved ant run the trail") { options[:mode] = :run }
+    opts.on("-i", "--interactive", "Balance the pole with the arrow keys") { options[:mode] = :interactive }
+    opts.on("-e", "--evolve", "Evolve a new controller") { options[:mode] = :evolve }
+    opts.on("-r", "--run", "Watch a previously evolved controller") { options[:mode] = :run }
     opts.on_tail("-h", "--help", "Show this message") do
       puts opts
       exit
@@ -30,30 +30,38 @@ if __FILE__ == $0
   case options[:mode]
   when :interactive
     s = GosuSimulation.new
-    #s.simulation.unbalance(1)
     s.show
   when :evolve
-    population = Population.new(Controller, :size => 100, :select_with => Rank)
-    population.evolve(20) do |g|
-      puts g.fittest.fitness
-      #print "."
-      #$stdout.flush
+    population = Population.new(Controller, :size => 100, :select_with => Tournament)
+    population.evolve do |g|
+      print "."
+      $stdout.flush
     end
     pp population.fittest.genes
   when :run
-    controller = Controller.new([:arg, :angular_velocity])
-    # controller = Controller.new([:call,
-    #  :*,
-    #  [:arg, :position],
-    #  [:call,
-    #   :+,
-    #   [:call,
-    #    :*,
-    #    [:arg, :angular_velocity],
-    #    [:call, :+, [:lit, 6.0], [:lit, 4.0]]],
-    #   [:arg, :angle]]])
+    controller = Controller.new([:call,
+     :+,
+     [:call,
+      :*,
+      [:call,
+       :*,
+       [:call,
+        :+,
+        [:call, :+, [:call, :-, [:lit, -1.0], [:arg, :angle]], [:arg, :angle]],
+        [:call, :*, [:lit, 0.4], [:call, :+, [:lit, 0.7], [:lit, 0.6]]]],
+       [:arg, :angle]],
+      [:call,
+       :*,
+       [:call, :*, [:lit, 0.5], [:arg, :position]],
+       [:call, :+, [:lit, 0.4], [:arg, :position]]]],
+     [:call,
+      :*,
+      [:call,
+       :*,
+       [:call, :*, [:lit, 0.5], [:arg, :position]],
+       [:call, :+, [:lit, 0.4], [:arg, :position]]],
+      [:call, :+, [:arg, :angle], [:arg, :angular_velocity]]]])
     s = GosuSimulation.new(controller)
-    #s.simulation.unbalance
     s.show
   end
 end
