@@ -1,10 +1,8 @@
-# Hi John
-
 This is a [Genetic Programming](http://en.wikipedia.org/wiki/Genetic_programming) library for Ruby.
 
 > In artificial intelligence, genetic programming (GP) is an evolutionary algorithm-based methodology inspired by biological evolution to find computer programs that perform a user-defined task.
 
-I really don't know what I'll do with this in the future; I'm just having fun. It's usable though (at least for toy problems), and interesting to play with.
+At present I have no intention of developing this further. It's usable though (at least for toy problems), and interesting to play with.
 
 # Requirements
 
@@ -26,7 +24,7 @@ Evolves an XOR function using just NAND. This is the simplest example and a good
 
 `polynomial.rb`
 
-Finds the function used to generate the sample data. Think fitting a line to a curve, or symbolic regression if you're a statistician.
+Finds the function used to generate the sample data. (Fit a function to some data, or symbolic regression.)
 
 `ant_trail.rb`
 
@@ -38,7 +36,3 @@ A solution to the Santa Fe Ant Trail problem, a textbook GP problem. Ants are se
     ruby examples/ant_trail/ant_trail.rb -d
     # Watch a previously evolved solution
     ruby examples/ant_trail/ant_trail.rb -r
-
-Thanks for reading, I'll see you tomorrow evening.
-
-Paul
