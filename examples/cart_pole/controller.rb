@@ -1,9 +1,10 @@
 class Controller < Tree
   args :angle, :angular_velocity, :position, :velocity
-  literals (1..10).map { |n| n/10.0 } + [-1.0]
+  literals ERCG.new
   function(:+) { |a,b| a+b }
   function(:-) { |a,b| a-b }
   function(:*) { |a,b| a*b }
+  function(:inv) { |a| -a }
 
   def tick(s)
     raw_result = evaluate(:angle => s.cart.pole.a,
@@ -29,20 +30,46 @@ class Controller < Tree
   def fitness
     @fitness ||= begin
       simulation = Simulation.new(self)
-      ticks = 0
-      simulation.unbalance
+      test_cases = [0.5, 1.0]
+      fitness = [0, 0] # Track fitness in each direction.
 
-      simulation.run_while do |s|
-        s.ticks < MAX_TICKS && s.cart.pole.a.abs < 0.21 && s.cart.offset.abs < 40
+      test_cases.each do |t|
+        [-1, 1].each do |dir|
+          equilibrium_bonus = 0
+          simulation.reset
+          simulation.unbalance(t*dir)
+          simulation.run_while do |s|
+            equilibrium_bonus += 1 if s.cart.pole.a.abs < 0.002 && s.cart.body.v.x.abs < 1
+            s.ticks < MAX_TICKS && s.cart.pole.a.abs < 0.21 && s.cart.offset.abs < 70
+          end
+          fitness[dir == -1 ? 0 : 1] += (MAX_TICKS*2-simulation.ticks-equilibrium_bonus)
+        end
       end
-      ticks += simulation.ticks
-      simulation.reset
-      simulation.unbalance(-1)
-      simulation.run_while do |s|
-        s.ticks < MAX_TICKS && s.cart.pole.a.abs < 0.21 && s.cart.offset.abs < 40
-      end
-      ticks += simulation.ticks
-      (MAX_TICKS*2-ticks)
+
+      #puts fitness.inspect
+      # Penalise unbalances solutions by only including the least fit side.
+      fitness.max + depth/50.0
+
+      # simulation.unbalance
+      #
+      # simulation.run_while do |s|
+      #   equilibrium_bonus += 1 if s.cart.pole.a.abs < 0.005 && s.cart.body.v.x.abs < 0.4
+      #   s.ticks < MAX_TICKS && s.cart.pole.a.abs < 0.21 && s.cart.offset.abs < 120
+      # end
+      # ticks += simulation.ticks
+      # simulation.reset
+      # simulation.unbalance(-1)
+      # simulation.run_while do |s|
+      #   equilibrium_bonus += 1 if s.cart.pole.a.abs < 0.005 && s.cart.body.v.x.abs < 0.4
+      #   s.ticks < MAX_TICKS && s.cart.pole.a.abs < 0.21 && s.cart.offset.abs < 120
+      # end
+      # ticks += simulation.ticks
+      # if equilibrium_bonus > 0
+      #   puts equilibrium_bonus
+      #   puts genes.inspect
+      # end
+
+      #(MAX_TICKS*test_cases.size*2-ticks-equilibrium_bonus)
     end
   end
 end

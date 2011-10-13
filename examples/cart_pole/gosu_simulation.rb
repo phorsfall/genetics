@@ -38,7 +38,7 @@ class GosuSimulation < Gosu::Window
     body = @simulation.cart.body
     pole = @simulation.cart.pole
 
-    draw_rect(body.p.x, body.p.y, Cart::WIDTH, Cart::HEIGHT, Cart::COLOUR)
+    draw_rect(body.p.x, body.p.y, Cart::WIDTH, Cart::HEIGHT, (@simulation.cart.offset.abs > 120) ? Gosu::Color::RED : Cart::COLOUR)
     rotate((pole.a/Math::PI)*180, pole.p.x, pole.p.y) do
       c = pole.a.abs > 0.21 ? Gosu::Color::RED : Cart::COLOUR
       draw_rect(pole.p.x, pole.p.y, 5, Cart::POLE_LENGTH, c)

@@ -6,6 +6,20 @@ require "gosu"
 require "chipmunk"
 require "pp"
 
+class ERCG
+  def to_a
+    self
+  end
+
+  def sample
+    rand
+  end
+
+  def empty?
+    false
+  end
+end
+
 require_relative "cart_pole/cart"
 require_relative "cart_pole/controller"
 require_relative "cart_pole/gosu_simulation"
@@ -30,38 +44,24 @@ if __FILE__ == $0
   case options[:mode]
   when :interactive
     s = GosuSimulation.new
+    s.simulation.unbalance
     s.show
   when :evolve
-    population = Population.new(Controller, :size => 100, :select_with => Tournament)
-    population.evolve do |g|
-      print "."
-      $stdout.flush
+    population = Population.new(Controller, :size => 200, :select_with => Tournament)
+    population.evolve(10000) do |g|
+      puts g.fittest.fitness
+      pp g.fittest.genes if (g.generation%10).zero?
+      # print "."
+      # $stdout.flush
     end
     pp population.fittest.genes
   when :run
     controller = Controller.new([:call,
      :+,
-     [:call,
-      :*,
-      [:call,
-       :*,
-       [:call,
-        :+,
-        [:call, :+, [:call, :-, [:lit, -1.0], [:arg, :angle]], [:arg, :angle]],
-        [:call, :*, [:lit, 0.4], [:call, :+, [:lit, 0.7], [:lit, 0.6]]]],
-       [:arg, :angle]],
-      [:call,
-       :*,
-       [:call, :*, [:lit, 0.5], [:arg, :position]],
-       [:call, :+, [:lit, 0.4], [:arg, :position]]]],
-     [:call,
-      :*,
-      [:call,
-       :*,
-       [:call, :*, [:lit, 0.5], [:arg, :position]],
-       [:call, :+, [:lit, 0.4], [:arg, :position]]],
-      [:call, :+, [:arg, :angle], [:arg, :angular_velocity]]]])
+     [:arg, :angle],
+     [:call, :*, [:lit, 0.36557278204818777], [:arg, :angular_velocity]]])
     s = GosuSimulation.new(controller)
+    s.simulation.unbalance(-1)
     s.show
   end
 end

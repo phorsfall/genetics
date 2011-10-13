@@ -21,8 +21,8 @@ class Simulation
   end
 
   def unbalance(dir = 1)
-    @cart.pole.apply_impulse CP::Vec2.new(20*dir, 0), CP::ZERO_VEC_2
-    @cart.body.v = CP::Vec2.new(10*dir, 0)
+    @cart.pole.apply_impulse CP::Vec2.new(150*dir, 0), CP::ZERO_VEC_2
+    #@cart.body.v = CP::Vec2.new(10*dir, 0)
   end
 
   def poll_controller

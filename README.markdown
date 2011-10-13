@@ -36,3 +36,7 @@ A solution to the Santa Fe Ant Trail problem, a textbook GP problem. Ants are se
     ruby examples/ant_trail/ant_trail.rb -d
     # Watch a previously evolved solution
     ruby examples/ant_trail/ant_trail.rb -r
+
+`cart_pole.rb`
+
+An evolved solution to the problem of controlling a cart on which is balanced a pole.
