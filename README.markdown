@@ -30,7 +30,7 @@ Finds the function used to generate the sample data. (Fit a function to some dat
 
 A solution to the Santa Fe Ant Trail problem, a textbook GP problem. Ants are set on a grid along with a trail of food. The ants can turn left and right, move forward and tell whether there is food directly ahead. The idea is to evolve an ant capable of following the trail, collecting all the food on the grid along the way.
 
-[![Ant Trail Screenshot](http://github.com/phorsfall/genetics/raw/master/assets/ant-trail-thumb.jpg)](http://github.com/phorsfall/genetics/raw/master/assets/ant-trail.png)
+[![Ant Trail Screenshot](http://github.com/phorsfall/genetics/raw/master/assets/ant-trail-thumb.png)](http://github.com/phorsfall/genetics/raw/master/assets/ant-trail.png)
 
     git clone http://github.com/phorsfall/genetics.git
     cd genetics
@@ -43,4 +43,4 @@ A solution to the Santa Fe Ant Trail problem, a textbook GP problem. Ants are se
 
 An evolved solution to the problem of controlling a cart on which is balanced a pole.
 
-[![Cart Pole Screenshot](http://github.com/phorsfall/genetics/raw/master/assets/cart-pole-thumb.jpg)](http://github.com/phorsfall/genetics/raw/master/assets/cart-pole.png)
+[![Cart Pole Screenshot](http://github.com/phorsfall/genetics/raw/master/assets/cart-pole-thumb.png)](http://github.com/phorsfall/genetics/raw/master/assets/cart-pole.png)
